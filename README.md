@@ -17,12 +17,12 @@ You can change it by adding this line with your desired key:
 set -g @sessionx-bind '<mykey>'
 ```
 
-## Prerequisits
+## Prerequisits 🛠️
 - [TPM](https://github.com/tmux-plugins/tpm)
 - [FZF](https://github.com/junegunn/fzf) (specifically [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script))
 
 
-## Working with SessionX
+## Working with SessionX 👷
 Launching the plugin pops up an fzf-tmux "popup" with fizzy search over existing session (-current session).
 If you insert a non-existing name and hit enter, a new session with that name will be created.
 - `C-r` will launch a `read` prompt to rename a session within the list
