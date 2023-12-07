@@ -3,13 +3,13 @@ A fuzzy Tmux session manager with preview capabilities, deleting, renaming and m
 
 ![image](./img/sessionx.png)
 
-# Install 💻
+## Install 💻
 Add this to your `.tmux.conf` and run `Ctrl-I` for TPM to install the plugin.
 ```conf
 set -g @plugin 'omerxx/tmux-sessionx'
 ```
 
-# Configure ⚙️
+## Configure ⚙️
 The default binding for this plugin is `<prefix>+O`
 You can change it by adding this line with your desired key:
 ```conf
@@ -17,7 +17,7 @@ set -g @sessionx-bind '<mykey>'
 ```
 
 
-## ⚠️ WARNING ⚠️
+## WARNING ⚠️
 This was only tested on one, macOs machine.
 It is also not designed to use outside Tmux and is tailored to fit *my* needs.
 That said, please feel free to open issues with bugs / additions you'd like to see.
