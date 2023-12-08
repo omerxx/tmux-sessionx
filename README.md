@@ -23,9 +23,9 @@ set -g @sessionx-x-path '<some-path>'
 ```
 
 ## Prerequisits 🛠️
-- [TPM](https://github.com/tmux-plugins/tpm)
-- [FZF](https://github.com/junegunn/fzf) (specifically [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script))
-- [BAT](https://github.com/sharkdp/bat)
+- [tpm](https://github.com/tmux-plugins/tpm)
+- [fzf](https://github.com/junegunn/fzf) (specifically [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script))
+- [bat](https://github.com/sharkdp/bat)
 
 
 ## Working with SessionX 👷
