@@ -1,47 +1,115 @@
 #!/usr/bin/env bash
+# Display preview of tmux windows/panes.
+# Meant for use in fzf preview.
+# Kudos:
+#   https://stackoverflow.com/a/55247572/197789
+#   https://github.com/petobens/dotfiles/blob/master/tmux/tmux_tree
 
-CURRENT="$(tmux display-message -p '#S')"
-
-input() {
-    (tmux list-sessions | sed -E 's/:.*$//' | grep -v "$CURRENT") || echo "$CURRENT"
+single_mode()
+{
+  session_name="${1}"
+  if test "${DISPLAY_TMUXP}" -eq 1 ; then
+    if $(tmux has-session -t "${session_name}" >& /dev/null ); then
+      :
+    else
+      tmuxp_conf="${HOME}/.tmuxp/${session_name}.yaml"
+      if test -e "${tmuxp_conf}" ; then
+        cat "${tmuxp_conf}"
+        return
+      fi
+    fi
+  fi
+  display_session "${session_name}"
 }
 
-handle_output() {
-    target=$(echo "$1" | tr -d '\n')
-    if [[ -z "$target" ]]; then
-        exit 0
-    fi
-    if ! tmux has-session -t="$target" 2> /dev/null; then
-        if test -d "$target"; then
-            tmux new-session -ds "${target##*/}" -c "$target"
-            target="${target##*/}"
-        else
-            tmux new-session -ds "$target"
-        fi
-    fi
-    tmux switch-client -t "$target"
+# Display a single sesssion
+display_session()
+{
+  session_name="${1}"
+  session_id=$(tmux ls -F '#{session_id}' \
+    -f "#{==:#{session_name},${session_name}}")
+  if test -z "${session_id}" ; then
+    echo "Unknown session: ${session_name}"
+    return 1
+  fi
+  # Display contents of session's active pane. Kudos: tmux-fzf
+  # https://github.com/sainnhe/tmux-fzf/blob/master/scripts/.preview
+  tmux capture-pane -ep -t ${session_id}
 }
 
-BIND_CTRL_D="ctrl-d:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
-BIND_CTRL_O="ctrl-o:print-query+execute(tmux new-session -d -s {})"
-BIND_CTRL_X="ctrl-x:reload(find ~/dotfiles -mindepth 1 -maxdepth 1 -type d)"
-BIND_ENTER="enter:replace-query+print-query"
-BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
+# Display a full tree, with selected session highlighted.
+# If an session name is passed as an argument, highlight it
+# in the output.
+# This is the original tmux_tree script (see kudos).
+tree_mode()
+{
+  highlight="${1}"
+  tmux ls -F'#{session_id}' | while read -r s; do
+    S=$(tmux ls -F'#{session_id}#{session_name}: #{T:tree_mode_format}' | grep ^"$s")
+    session_info=${S##$s}
+    session_name=$(echo "$session_info" | cut -d ':' -f 1)
+    if [[ -n "$highlight" ]] && [[ "$highlight" == "$session_name" ]]; then
+      echo -e "\033[1;34m$session_info\033[0m"
+    else
+      echo -e "\033[1m$session_info\033[0m"
+    fi
+    # Display each window
+    tmux lsw -t"$s" -F'#{window_id}' | while read -r w; do
+      W=$(tmux lsw -t"$s" -F'#{window_id}#{T:tree_mode_format}' | grep ^"$w")
+      echo "  ﬌ ${W##$w}"
+    done
+  done
+}
 
-RESULT=$(input | \
-    fzf-tmux \
-        -p "75%,75%" \
-	--prompt " " \
-        --header='C-d=del C-x=config C-r=rename 󰿄=go' \
-	--print-query \
-        --border-label "Current session: \"$CURRENT\" " \
-        --bind "$BIND_CTRL_D" \
-        --bind "$BIND_CTRL_O" \
-        --bind "$BIND_CTRL_X" \
-        --bind "$BIND_CTRL_R" \
-        --bind "$BIND_ENTER" \
-        --exit-0 \
-        --preview="${TMUX_PLUGIN_MANAGER_PATH}tmux-sessionx/scripts/preview.sh {} | bat --theme TwoDark --style plain" \
-        --preview-window=",55%,,") 
+usage()
+{
+  cat <<-END
+Usage: $0 [<options>] [<session_name>]
 
-handle_output "$RESULT"
+Options:
+  -h              Print help and exit.
+  -p              Display tmuxp configuration is session not running
+  -t              Display tree of sessions
+
+A session name of "*Last*" is replaced with the client's last session.
+END
+# Note 'END' above most be fully left justified.
+}
+
+# What are we displaying?
+# 'tree' == full tree of active sessions
+# 'single' == single session
+mode="single"
+
+# In single mode, if session is not running, display
+# tmuxp configuration instead (if it exists)
+DISPLAY_TMUXP=0
+
+while getopts ":hpt" opt; do
+  case $opt in
+    h) usage ; exit 0 ;;
+    p) DISPLAY_TMUXP=1 ;;
+    t) mode="tree" ;;
+    \?) echo "Invalid option: -$OPTARG" >&2 ;;
+  esac
+done
+
+shift $(($OPTIND - 1))
+SESSION="$1"
+
+if test "${SESSION}" == '*Last*' ; then
+  SESSION=$(tmux display-message -p "#{client_last_session}")
+  if test -z "${SESSION}" ; then
+    echo "No last session."
+    exit 0
+  fi
+fi
+
+case "${mode}" in
+  single) single_mode "${SESSION}" ;;
+  tree) tree_mode "${SESSION}" ;;
+  *) echo "Unknown mode \"${mode}\"" ;;
+esac
+
+exit $status
+

@@ -41,7 +41,7 @@ RESULT=$(input | \
         --bind "$BIND_CTRL_R" \
         --bind "$BIND_ENTER" \
         --exit-0 \
-        --preview="${TMUX_PLUGIN_MANAGER_PATH}tmux-sessionx/scripts/preview.sh {} | bat --theme TwoDark --style plain" \
+        --preview="${TMUX_PLUGIN_MANAGER_PATH}tmux-sessionx/scripts/preview.sh {} | bat --style plain" \
         --preview-window=",55%,,") 
 
 handle_output "$RESULT"
