@@ -12,9 +12,14 @@ set -g @plugin 'omerxx/tmux-sessionx'
 ## Configure ⚙️
 The default binding for this plugin is `<prefix>+O`
 You can change it by adding this line with your desired key:
-```conf
+```bash
 # I recommend using `o` if not already in use, for least key strokes when launching
 set -g @sessionx-bind '<mykey>'
+```
+`C-x` is customizeable as well, by default it indexes `$HOME/.config`, but this can be changed by adding this config line:
+```bash
+# e.g. set -g @sessionx-x-path '/Users/me/notes'
+set -g @sessionx-x-path '<some-path>'
 ```
 
 ## Prerequisits 🛠️
