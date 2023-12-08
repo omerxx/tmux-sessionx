@@ -20,6 +20,7 @@ set -g @sessionx-bind '<mykey>'
 ## Prerequisits 🛠️
 - [TPM](https://github.com/tmux-plugins/tpm)
 - [FZF](https://github.com/junegunn/fzf) (specifically [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script))
+- [BAT](https://github.com/sharkdp/bat)
 
 
 ## Working with SessionX 👷
