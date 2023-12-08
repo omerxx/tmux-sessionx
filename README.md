@@ -33,6 +33,7 @@ Launching the plugin pops up an fzf-tmux "popup" with fizzy search over existing
 If you insert a non-existing name and hit enter, a new session with that name will be created.
 - `C-r` will launch a `read` prompt to rename a session within the list
 - `C-d` will delete the selected session
+- `C-w` will reload the list with all the available *windows* and their preview
 - `C-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
 
 
