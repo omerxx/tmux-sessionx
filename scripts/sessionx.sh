@@ -32,7 +32,7 @@ handle_output() {
 }
 
 BIND_CTRL_D="ctrl-d:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
-BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}.0')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {} | bat --style plain)"
+BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {} | bat --style plain)"
 BIND_CTRL_O="ctrl-o:print-query+execute(tmux new-session -d -s {})"
 CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
 BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)"
