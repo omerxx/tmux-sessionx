@@ -26,15 +26,16 @@ single_mode()
 display_session()
 {
   session_name="${1}"
-  session_id=$(tmux ls -F '#{session_id}' \
-    -f "#{==:#{session_name},${session_name}}")
+  session_id=$(tmux ls -F '#{session_id}' -f "#{==:#{session_name},${session_name}}")
   if test -z "${session_id}" ; then
     echo "Unknown session: ${session_name}"
     return 1
   fi
-  # Display contents of session's active pane. Kudos: tmux-fzf
-  # https://github.com/sainnhe/tmux-fzf/blob/master/scripts/.preview
-  tmux capture-pane -ep -t ${session_id}
+  tmux capture-pane -ep -t "${session_id}"
+}
+
+window_mode(){
+  tmux capture-pane -ep -t "${1}"
 }
 
 # Display a full tree, with selected session highlighted.
@@ -85,11 +86,12 @@ mode="single"
 # tmuxp configuration instead (if it exists)
 DISPLAY_TMUXP=0
 
-while getopts ":hpt" opt; do
+while getopts ":hptw" opt; do
   case $opt in
     h) usage ; exit 0 ;;
     p) DISPLAY_TMUXP=1 ;;
     t) mode="tree" ;;
+    w) mode="window" ;;
     \?) echo "Invalid option: -$OPTARG" >&2 ;;
   esac
 done
@@ -108,6 +110,7 @@ fi
 case "${mode}" in
   single) single_mode "${SESSION}" ;;
   tree) tree_mode "${SESSION}" ;;
+  window) window_mode "${SESSION}" ;;
   *) echo "Unknown mode \"${mode}\"" ;;
 esac
 
