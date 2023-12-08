@@ -3,6 +3,13 @@ A fuzzy Tmux session manager with preview capabilities, deleting, renaming and m
 
 ![image](./img/sessionx.png)
 
+
+## Prerequisits 🛠️
+- [tpm](https://github.com/tmux-plugins/tpm)
+- [fzf](https://github.com/junegunn/fzf) (specifically [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script))
+- [bat](https://github.com/sharkdp/bat)
+
+
 ## Install 💻
 Add this to your `.tmux.conf` and run `Ctrl-I` for TPM to install the plugin.
 ```conf
@@ -21,12 +28,6 @@ set -g @sessionx-bind '<mykey>'
 # e.g. set -g @sessionx-x-path '~/dotfiles'
 set -g @sessionx-x-path '<some-path>'
 ```
-
-## Prerequisits 🛠️
-- [tpm](https://github.com/tmux-plugins/tpm)
-- [fzf](https://github.com/junegunn/fzf) (specifically [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script))
-- [bat](https://github.com/sharkdp/bat)
-
 
 ## Working with SessionX 👷
 Launching the plugin pops up an fzf-tmux "popup" with fizzy search over existing session (-current session).
