@@ -18,7 +18,7 @@ set -g @sessionx-bind '<mykey>'
 ```
 `C-x` is customizeable as well, by default it indexes `$HOME/.config`, but this can be changed by adding this config line:
 ```bash
-# e.g. set -g @sessionx-x-path '/Users/me/notes'
+# e.g. set -g @sessionx-x-path '~/dotfiles'
 set -g @sessionx-x-path '<some-path>'
 ```
 
