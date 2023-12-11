@@ -52,6 +52,7 @@ RESULT=$(input | \
         --bind "$BIND_CTRL_R" \
         --bind "$BIND_CTRL_W" \
         --bind "$BIND_ENTER" \
+        --tac \
         --exit-0 \
         --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {} | bat --style plain" \
         --preview-window=",55%,,") 
