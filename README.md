@@ -34,6 +34,12 @@ set -g @sessionx-x-path '<some-path>'
 # A comma delimited absolute-paths list of custom paths 
 # always visible in results and ready to create a session from 
 set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
+
+# By default, the current session will not be shown on first view
+# This is to support quick switch of sessions
+# Only after other actions (e.g. rename) will the current session appear
+# Setting this option to 'false' changes this default behavior
+set -g @sessionx-filter-current 'false' 
 ```
 
 ## Working with SessionX 👷

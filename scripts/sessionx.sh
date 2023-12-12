@@ -2,8 +2,22 @@
 
 CURRENT="$(tmux display-message -p '#S')"
 
+tmux_option_or_fallback() {
+	local option_value
+	option_value="$(tmux show-option -gqv "$1")"
+	if [ -z "$option_value" ]; then
+		option_value="$2"
+	fi
+	echo "$option_value"
+}
+
 input() {
-    (tmux list-sessions | sed -E 's/:.*$//' | grep -v "$CURRENT$")  || echo "$CURRENT"
+    filter_current_session=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
+    if [[ "$filter_current_session" == "true" ]]; then
+        (tmux list-sessions | sed -E 's/:.*$//' | grep -v "$CURRENT$")  || echo "$CURRENT"
+    else
+        (tmux list-sessions | sed -E 's/:.*$//')  || echo "$CURRENT"
+    fi
 }
 
 additional_input() {
