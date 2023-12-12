@@ -3,7 +3,48 @@
 CURRENT="$(tmux display-message -p '#S')"
 
 input() {
-    (tmux list-sessions | sed -E 's/:.*$//' | grep -v "$CURRENT") || echo "$CURRENT"
+    (tmux list-sessions | sed -E 's/:.*$//' | grep -v "$CURRENT$")  || echo "$CURRENT"
+}
+
+additional_input() {
+    sessions=$(tmux list-sessions | sed -E 's/:.*$//')
+    custom_paths=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
+    list=()
+    if [[ -z "$custom_paths" ]]; then
+        echo ""
+    else
+        for i in ${custom_paths//,/ }; do
+            if [[ $sessions == *"${i##*/}"* ]]; then
+                continue
+            fi
+            list+=("${i}\n")
+            last=$i
+        done
+        unset 'list[${#list[@]}-1]'
+        list+=("${last}")
+        echo "${list[@]}"
+    fi
+
+
+    # sessionize_paths=$(tmux_option_or_fallback "@sessionx-sessionize-paths" "")
+    # sessionize_list=()
+    # if [[ -z "$sessionize_paths" ]]; then
+    #     echo ""
+    # else
+    #     for i in ${sessionize_paths//,/ }; do
+    #         # if [[ $sessions == *"${i##*/}"* ]]; then
+    #         #     continue
+    #         # fi
+    #         if test -d "$i"; then
+    #             sessionize_list+=("${i}\n")
+    #             last=$i
+    #         fi
+    #     done
+    #     unset 'sessionize_list[${#list[@]}-1]'
+    #     sessionize_list+=("${last}")
+    #     # echo "${sessionize_list[@]}"
+    # fi
+    # echo -e "${list[@]}" + "\n${sessionize_list[@]}"
 }
 
 tmux_option_or_fallback() {
