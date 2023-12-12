@@ -65,7 +65,7 @@ handle_output() {
     tmux switch-client -t "$target"
 }
 
-BIND_CTRL_D="ctrl-d:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
+BIND_BSPACE="bspace:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
 BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {} | bat --style plain)"
 BIND_CTRL_O="ctrl-o:print-query+execute(tmux new-session -d -s {})"
 CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
@@ -83,12 +83,7 @@ fi
 
 RESULT=$(echo -e "${INPUT// /}" | \
     fzf-tmux \
-        -p "75%,75%" \
-	--prompt " " \
-        --header='󰿄=go C-d=del C-r=rename C-x=custom C-w=window-mode' \
-	--print-query \
-        --border-label "Current session: \"$CURRENT\" " \
-        --bind "$BIND_CTRL_D" \
+        --bind "$BIND_BSPACE" \
         --bind "$BIND_CTRL_O" \
         --bind "$BIND_CTRL_X" \
         --bind "$BIND_CTRL_R" \
