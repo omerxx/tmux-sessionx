@@ -40,6 +40,10 @@ set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
 # Only after other actions (e.g. rename) will the current session appear
 # Setting this option to 'false' changes this default behavior
 set -g @sessionx-filter-current 'false' 
+
+# Window mode can be turned on so that the default layout
+# Has all the windows listed rather than sessions only
+set -g @sessionx-window-mode 'on' 
 ```
 
 ## Working with SessionX 👷

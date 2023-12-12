@@ -11,12 +11,24 @@ tmux_option_or_fallback() {
 	echo "$option_value"
 }
 
+check_window_mode() {
+    default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
+    if [[ "$default_window_mode" == "on" ]]; then
+        PREVIEW_OPTIONS="-w"
+    fi
+}
+
 input() {
-    filter_current_session=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
-    if [[ "$filter_current_session" == "true" ]]; then
-        (tmux list-sessions | sed -E 's/:.*$//' | grep -v "$CURRENT$")  || echo "$CURRENT"
+    default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
+    if [[ "$default_window_mode" == "on" ]]; then
+        (tmux list-windows -a -F '#{session_name}:#{window_name}')
     else
-        (tmux list-sessions | sed -E 's/:.*$//')  || echo "$CURRENT"
+        filter_current_session=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
+        if [[ "$filter_current_session" == "true" ]]; then
+            (tmux list-sessions | sed -E 's/:.*$//' | grep -v "$CURRENT$")  || echo "$CURRENT"
+        else
+            (tmux list-sessions | sed -E 's/:.*$//')  || echo "$CURRENT"
+        fi
     fi
 }
 
@@ -40,15 +52,6 @@ additional_input() {
     fi
 }
 
-tmux_option_or_fallback() {
-	local option_value
-	option_value="$(tmux show-option -gqv "$1")"
-	if [ -z "$option_value" ]; then
-		option_value="$2"
-	fi
-	echo "$option_value"
-}
-
 handle_output() {
     target=$(echo "$1" | tr -d '\n')
     if [[ -z "$target" ]]; then
@@ -66,7 +69,7 @@ handle_output() {
 }
 
 BIND_BSPACE="bspace:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
-BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {} | bat --style plain)"
+BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {})"
 BIND_CTRL_O="ctrl-o:print-query+execute(tmux new-session -d -s {})"
 CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
 BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)"
@@ -74,6 +77,7 @@ BIND_ENTER="enter:replace-query+print-query"
 BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
 
 
+check_window_mode
 INPUT=$(input)
 ADDITIONAL_INPUT=$(additional_input)
 if [[ -n $ADDITIONAL_INPUT ]]; then
@@ -98,7 +102,7 @@ RESULT=$(echo -e "${INPUT// /}" | \
         --color 'preview-border:236,preview-scrollbar:0' \
         --exit-0 \
         --header='󰿄=go bspace=delete C-r=rename C-x=custom C-w=window-mode' \
-        --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {}" \
+        --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh ${PREVIEW_OPTIONS} {}" \
         --preview-window=",55%,," \
         --pointer='▶' \
         -p "75%,75%" \
