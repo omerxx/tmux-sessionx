@@ -29,7 +29,7 @@ set -g @sessionx-bind '<mykey>'
 set -g @sessionx-x-path '<some-path>'
 ```
 
-### Additional configuratio options:
+### Additional configuration options:
 ```bash
 # A comma delimited absolute-paths list of custom paths 
 # always visible in results and ready to create a session from 
