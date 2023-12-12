@@ -92,6 +92,8 @@ RESULT=$(echo -e "${INPUT// /}" | \
         --tac \
         --exit-0 \
         --color 'preview-border:236,preview-scrollbar:0' \
+        --exit-0 \
+        --header='󰿄=go bspace=delete C-r=rename C-x=custom C-w=window-mode' \
         --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {}" \
         --preview-window=",55%,," \
         --scrollbar '▌▐') 
