@@ -11,11 +11,13 @@ tmux_option_or_fallback() {
 	echo "$option_value"
 }
 
-check_window_mode() {
+preview_settings() {
     default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
     if [[ "$default_window_mode" == "on" ]]; then
         PREVIEW_OPTIONS="-w"
     fi
+    preview_location=$(tmux_option_or_fallback "@sessionx-preview-location" "top")
+    preview_ratio=$(tmux_option_or_fallback "@sessionx-preview-ratio" "75%")
 }
 
 input() {
@@ -103,7 +105,7 @@ RESULT=$(echo -e "${INPUT// /}" | \
         --exit-0 \
         --header='󰿄=go bspace=delete C-r=rename C-x=custom C-w=window-mode' \
         --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh ${PREVIEW_OPTIONS} {}" \
-        --preview-window=",55%,," \
+        --preview-window="${preview_location},${preview_ratio},," \
         --pointer='▶' \
         -p "75%,75%" \
 	--prompt " " \

@@ -44,6 +44,11 @@ set -g @sessionx-filter-current 'false'
 # Window mode can be turned on so that the default layout
 # Has all the windows listed rather than sessions only
 set -g @sessionx-window-mode 'on' 
+
+# Preview location and screenspace can be adjusted with these
+# Reminder: it can be toggeled on/off with `?`
+set -g @sessionx-preview-location 'top'
+set -g @sessionx-preview-ratio '75%'
 ```
 
 ## Working with SessionX 👷
