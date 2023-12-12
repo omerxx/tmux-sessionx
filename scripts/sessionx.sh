@@ -72,25 +72,23 @@ handle_output() {
 
 BIND_ALT_BSPACE="alt-bspace:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
 BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {})"
-BIND_CTRL_O="ctrl-o:print-query+execute(tmux new-session -d -s {})"
 CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
 BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)"
 BIND_ENTER="enter:replace-query+print-query"
 BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
 
 
-check_window_mode
+preview_settings
 INPUT=$(input)
 ADDITIONAL_INPUT=$(additional_input)
 if [[ -n $ADDITIONAL_INPUT ]]; then
     INPUT="$(additional_input)\n$INPUT"
 fi
-
+HEADER="󰿄=go alt+bspace=delete C-r=rename C-x=custom C-w=window-mode C-n=new session"
 
 RESULT=$(echo -e "${INPUT// /}" | \
     fzf-tmux \
         --bind "$BIND_ALT_BSPACE" \
-        --bind "$BIND_CTRL_O" \
         --bind "$BIND_CTRL_X" \
         --bind "$BIND_CTRL_R" \
         --bind "$BIND_CTRL_W" \
@@ -103,7 +101,7 @@ RESULT=$(echo -e "${INPUT// /}" | \
         --color 'pointer:9,spinner:92,marker:46' \
         --color 'preview-border:236,preview-scrollbar:0' \
         --exit-0 \
-        --header='󰿄=go bspace=delete C-r=rename C-x=custom C-w=window-mode' \
+        --header="$HEADER" \
         --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh ${PREVIEW_OPTIONS} {}" \
         --preview-window="${preview_location},${preview_ratio},," \
         --pointer='▶' \
