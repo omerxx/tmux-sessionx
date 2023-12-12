@@ -82,7 +82,9 @@ RESULT=$(echo -e "${INPUT// /}" | \
         --bind "$BIND_ENTER" \
         --tac \
         --exit-0 \
-        --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {} | bat --style plain" \
-        --preview-window=",55%,,") 
+        --color 'preview-border:236,preview-scrollbar:0' \
+        --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {}" \
+        --preview-window=",55%,," \
+        --scrollbar '▌▐') 
 
 handle_output "$RESULT"
