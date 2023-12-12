@@ -47,8 +47,8 @@ set -g @sessionx-window-mode 'on'
 
 # Preview location and screenspace can be adjusted with these
 # Reminder: it can be toggeled on/off with `?`
-set -g @sessionx-preview-location 'top'
-set -g @sessionx-preview-ratio '75%'
+set -g @sessionx-preview-location 'right'
+set -g @sessionx-preview-ratio '55%'
 ```
 
 ## Working with SessionX 👷
