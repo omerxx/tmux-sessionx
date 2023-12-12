@@ -100,6 +100,11 @@ RESULT=$(echo -e "${INPUT// /}" | \
         --header='󰿄=go bspace=delete C-r=rename C-x=custom C-w=window-mode' \
         --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {}" \
         --preview-window=",55%,," \
+        --pointer='▶' \
+        -p "75%,75%" \
+	--prompt " " \
+	--print-query \
+        --tac \
         --scrollbar '▌▐') 
 
 handle_output "$RESULT"
