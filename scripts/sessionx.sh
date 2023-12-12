@@ -89,8 +89,12 @@ RESULT=$(echo -e "${INPUT// /}" | \
         --bind "$BIND_CTRL_R" \
         --bind "$BIND_CTRL_W" \
         --bind "$BIND_ENTER" \
-        --tac \
-        --exit-0 \
+        --bind '?:toggle-preview' \
+        --bind 'ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' \
+        --bind 'change:first' \
+        --bind 'focus:transform-preview-label:echo [ {} ]' \
+        --border-label "Current session: \"$CURRENT\" " \
+        --color 'pointer:9,spinner:92,marker:46' \
         --color 'preview-border:236,preview-scrollbar:0' \
         --exit-0 \
         --header='󰿄=go bspace=delete C-r=rename C-x=custom C-w=window-mode' \
