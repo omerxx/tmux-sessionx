@@ -29,6 +29,13 @@ set -g @sessionx-bind '<mykey>'
 set -g @sessionx-x-path '<some-path>'
 ```
 
+### Additional configuratio options:
+```bash
+# A comma delimited absolute-paths list of custom paths 
+# always visible in results and ready to create a session from 
+set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
+```
+
 ## Working with SessionX 👷
 Launching the plugin pops up an fzf-tmux "popup" with fizzy search over existing session (-current session).
 If you insert a non-existing name and hit enter, a new session with that name will be created.
