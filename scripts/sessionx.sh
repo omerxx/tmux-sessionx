@@ -24,27 +24,6 @@ additional_input() {
         list+=("${last}")
         echo "${list[@]}"
     fi
-
-
-    # sessionize_paths=$(tmux_option_or_fallback "@sessionx-sessionize-paths" "")
-    # sessionize_list=()
-    # if [[ -z "$sessionize_paths" ]]; then
-    #     echo ""
-    # else
-    #     for i in ${sessionize_paths//,/ }; do
-    #         # if [[ $sessions == *"${i##*/}"* ]]; then
-    #         #     continue
-    #         # fi
-    #         if test -d "$i"; then
-    #             sessionize_list+=("${i}\n")
-    #             last=$i
-    #         fi
-    #     done
-    #     unset 'sessionize_list[${#list[@]}-1]'
-    #     sessionize_list+=("${last}")
-    #     # echo "${sessionize_list[@]}"
-    # fi
-    # echo -e "${list[@]}" + "\n${sessionize_list[@]}"
 }
 
 tmux_option_or_fallback() {
@@ -80,7 +59,15 @@ BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)"
 BIND_ENTER="enter:replace-query+print-query"
 BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
 
-RESULT=$(input | \
+
+INPUT=$(input)
+ADDITIONAL_INPUT=$(additional_input)
+if [[ -n $ADDITIONAL_INPUT ]]; then
+    INPUT="$(additional_input)\n$INPUT"
+fi
+
+
+RESULT=$(echo -e "${INPUT// /}" | \
     fzf-tmux \
         -p "75%,75%" \
 	--prompt " " \
