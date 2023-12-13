@@ -62,13 +62,13 @@ handle_output() {
     fi
 
     if ! tmux has-session -t="$target" 2> /dev/null; then
-        if [[ "$Z_MODE" == "on" ]]; then
-            z_target=$(zoxide query "$target")
-            tmux new-session -ds "$target" -c "$z_target" -n "$z_target"
+        if test -d "$target"; then
+            tmux new-session -ds "${target##*/}" -c "$target"
+            target="${target##*/}"
         else
-            if test -d "$target"; then
-                tmux new-session -ds "${target##*/}" -c "$target"
-                target="${target##*/}"
+            if [[ "$Z_MODE" == "on" ]]; then
+                z_target=$(zoxide query "$target")
+                tmux new-session -ds "$target" -c "$z_target" -n "$z_target"
             else
                 tmux new-session -ds "$target" 
             fi
@@ -84,6 +84,7 @@ run_plugin() {
     BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {})"
     CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
     BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
+    BIND_CTRL_E="ctrl-e:reload(find $PWD -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
     BIND_ENTER="enter:replace-query+print-query"
     BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
     INPUT=$(input)
@@ -97,6 +98,7 @@ run_plugin() {
         fzf-tmux \
             --bind "$BIND_ALT_BSPACE" \
             --bind "$BIND_CTRL_X" \
+            --bind "$BIND_CTRL_E" \
             --bind "$BIND_CTRL_R" \
             --bind "$BIND_CTRL_W" \
             --bind "$BIND_ENTER" \
