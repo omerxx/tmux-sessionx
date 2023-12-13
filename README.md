@@ -8,6 +8,7 @@ A fuzzy Tmux session manager with preview capabilities, deleting, renaming and m
 - [tpm](https://github.com/tmux-plugins/tpm)
 - [fzf](https://github.com/junegunn/fzf) (specifically [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script))
 - [bat](https://github.com/sharkdp/bat)
+- Optional: [zoxide](https://github.com/ajeetdsouza/zoxide)
 
 
 ## Install 💻
@@ -49,6 +50,10 @@ set -g @sessionx-window-mode 'on'
 # Reminder: it can be toggeled on/off with `?`
 set -g @sessionx-preview-location 'right'
 set -g @sessionx-preview-ratio '55%'
+
+# When set to 'on' a non-result will be sent to zoxide for path matching
+# Requires zoxide installed
+set -g @sessionx-zoxide-mode 'on'
 ```
 
 ## Working with SessionX 👷

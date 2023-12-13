@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 CURRENT="$(tmux display-message -p '#S')"
+Z_MODE="off"
 
 tmux_option_or_fallback() {
 	local option_value
@@ -59,56 +60,64 @@ handle_output() {
     if [[ -z "$target" ]]; then
         exit 0
     fi
+
     if ! tmux has-session -t="$target" 2> /dev/null; then
-        if test -d "$target"; then
-            tmux new-session -ds "${target##*/}" -c "$target"
-            target="${target##*/}"
+        if [[ "$Z_MODE" == "on" ]]; then
+            z_target=$(zoxide query "$target")
+            tmux new-session -ds "$target" -c "$z_target" -n "$z_target"
         else
-            tmux new-session -ds "$target"
+            if test -d "$target"; then
+                tmux new-session -ds "${target##*/}" -c "$target"
+                target="${target##*/}"
+            else
+                tmux new-session -ds "$target" 
+            fi
         fi
     fi
-    tmux switch-client -t "$target"
+    tmux switch-client -t "$target" 
 }
 
-BIND_ALT_BSPACE="alt-bspace:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
-BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {})"
-CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
-BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)"
-BIND_ENTER="enter:replace-query+print-query"
-BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
+run_plugin() {
+    preview_settings
+    Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
+    BIND_ALT_BSPACE="alt-bspace:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
+    BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {})"
+    CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
+    BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)"
+    BIND_ENTER="enter:replace-query+print-query"
+    BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
+    INPUT=$(input)
+    ADDITIONAL_INPUT=$(additional_input)
+    if [[ -n $ADDITIONAL_INPUT ]]; then
+        INPUT="$(additional_input)\n$INPUT"
+    fi
+    HEADER="󰿄=go alt+bspace=delete C-r=rename C-x=custom C-w=window-mode C-n=new session"
 
+    RESULT=$(echo -e "${INPUT// /}" | \
+        fzf-tmux \
+            --bind "$BIND_ALT_BSPACE" \
+            --bind "$BIND_CTRL_X" \
+            --bind "$BIND_CTRL_R" \
+            --bind "$BIND_CTRL_W" \
+            --bind "$BIND_ENTER" \
+            --bind '?:toggle-preview' \
+            --bind 'ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' \
+            --bind 'change:first' \
+            --bind 'focus:transform-preview-label:echo [ {} ]' \
+            --border-label "Current session: \"$CURRENT\" " \
+            --color 'pointer:9,spinner:92,marker:46' \
+            --color 'preview-border:236,preview-scrollbar:0' \
+            --exit-0 \
+            --header="$HEADER" \
+            --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh ${PREVIEW_OPTIONS} {}" \
+            --preview-window="${preview_location},${preview_ratio},," \
+            --pointer='▶' \
+            -p "75%,75%" \
+            --prompt " " \
+            --print-query \
+            --tac \
+            --scrollbar '▌▐') 
+}
 
-preview_settings
-INPUT=$(input)
-ADDITIONAL_INPUT=$(additional_input)
-if [[ -n $ADDITIONAL_INPUT ]]; then
-    INPUT="$(additional_input)\n$INPUT"
-fi
-HEADER="󰿄=go alt+bspace=delete C-r=rename C-x=custom C-w=window-mode C-n=new session"
-
-RESULT=$(echo -e "${INPUT// /}" | \
-    fzf-tmux \
-        --bind "$BIND_ALT_BSPACE" \
-        --bind "$BIND_CTRL_X" \
-        --bind "$BIND_CTRL_R" \
-        --bind "$BIND_CTRL_W" \
-        --bind "$BIND_ENTER" \
-        --bind '?:toggle-preview' \
-        --bind 'ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' \
-        --bind 'change:first' \
-        --bind 'focus:transform-preview-label:echo [ {} ]' \
-        --border-label "Current session: \"$CURRENT\" " \
-        --color 'pointer:9,spinner:92,marker:46' \
-        --color 'preview-border:236,preview-scrollbar:0' \
-        --exit-0 \
-        --header="$HEADER" \
-        --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh ${PREVIEW_OPTIONS} {}" \
-        --preview-window="${preview_location},${preview_ratio},," \
-        --pointer='▶' \
-        -p "75%,75%" \
-	--prompt " " \
-	--print-query \
-        --tac \
-        --scrollbar '▌▐') 
-
+run_plugin
 handle_output "$RESULT"
