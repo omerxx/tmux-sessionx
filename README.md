@@ -51,6 +51,10 @@ set -g @sessionx-window-mode 'on'
 set -g @sessionx-preview-location 'right'
 set -g @sessionx-preview-ratio '55%'
 
+# Change window dimensions
+set -g @sessionx-window-height '90%'
+set -g @sessionx-window-width '75%'
+
 # When set to 'on' a non-result will be sent to zoxide for path matching
 # Requires zoxide installed
 set -g @sessionx-zoxide-mode 'on'

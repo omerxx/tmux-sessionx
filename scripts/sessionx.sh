@@ -21,6 +21,11 @@ preview_settings() {
     preview_ratio=$(tmux_option_or_fallback "@sessionx-preview-ratio" "75%")
 }
 
+window_settings() {
+    window_height=$(tmux_option_or_fallback "@sessionx-window-height" "75%")
+    window_width=$(tmux_option_or_fallback "@sessionx-window-width" "75%")
+}
+
 input() {
     default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
     if [[ "$default_window_mode" == "on" ]]; then
@@ -79,6 +84,7 @@ handle_output() {
 
 run_plugin() {
     preview_settings
+    window_settings
     Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
     BIND_ALT_BSPACE="alt-bspace:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
     BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {})"
@@ -114,7 +120,7 @@ run_plugin() {
             --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh ${PREVIEW_OPTIONS} {}" \
             --preview-window="${preview_location},${preview_ratio},," \
             --pointer='▶' \
-            -p "75%,75%" \
+            -p "$window_width,$window_height" \
             --prompt " " \
             --print-query \
             --tac \
