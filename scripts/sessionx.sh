@@ -92,7 +92,7 @@ run_plugin() {
     if [[ -n $ADDITIONAL_INPUT ]]; then
         INPUT="$(additional_input)\n$INPUT"
     fi
-    HEADER="󰿄=go alt+bspace=delete C-r=rename C-x=custom C-w=window-mode C-n=new session"
+    HEADER="enter=󰿄  alt+󰁮 =󱂧  C-r=󰑕  C-x=󱃖  C-w=   C-u=  C-d= "
 
     RESULT=$(echo -e "${INPUT// /}" | \
         fzf-tmux \
