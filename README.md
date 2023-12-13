@@ -24,16 +24,16 @@ You can change it by adding this line with your desired key:
 # I recommend using `o` if not already in use, for least key strokes when launching
 set -g @sessionx-bind '<mykey>'
 ```
-`C-x` is customizeable as well, by default it indexes `$HOME/.config`, but this can be changed by adding this config line:
-```bash
-# e.g. set -g @sessionx-x-path '~/dotfiles'
-set -g @sessionx-x-path '<some-path>'
-```
-
 ### Additional configuration options:
 ```bash
+# `C-x` is a customizeable, by default it indexes directories in `$HOME/.config`, 
+# but this can be changed by adding the config below.
+# e.g. set -g @sessionx-x-path '~/dotfiles'
+set -g @sessionx-x-path '<some-path>'
+
 # A comma delimited absolute-paths list of custom paths 
-# always visible in results and ready to create a session from 
+# always visible in results and ready to create a session from. 
+# Tip: if you're using zoxide mode, there's a good chance this is redundant
 set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
 
 # By default, the current session will not be shown on first view
