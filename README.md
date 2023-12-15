@@ -1,7 +1,7 @@
 # Tmux SessionX
 A fuzzy Tmux session manager with preview capabilities, deleting, renaming and more!
 
-![image](./img/sessionx.png)
+![image](./img/sessionxv2.png)
 
 
 ## Prerequisits 🛠️
