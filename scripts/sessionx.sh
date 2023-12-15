@@ -85,26 +85,28 @@ handle_output() {
 run_plugin() {
     preview_settings
     window_settings
+    INPUT=$(input)
+    ADDITIONAL_INPUT=$(additional_input)
+    if [[ -n $ADDITIONAL_INPUT ]]; then
+        INPUT="$(additional_input)\n$INPUT"
+    fi
     Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
     BIND_ALT_BSPACE="alt-bspace:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
     BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_index} [#{window_name}]')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {1})"
     CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
     BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
     BIND_CTRL_E="ctrl-e:reload(find $PWD -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
+    BIND_CTRL_B="ctrl-b:reload(echo -e \"${INPUT// /}\")"
     BIND_ENTER="enter:replace-query+print-query"
     BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
-    INPUT=$(input)
-    ADDITIONAL_INPUT=$(additional_input)
-    if [[ -n $ADDITIONAL_INPUT ]]; then
-        INPUT="$(additional_input)\n$INPUT"
-    fi
-    HEADER="enter=󰿄  alt+󰁮 =󱂧  C-r=󰑕  C-x=󱃖  C-w=   C-u=  C-d= "
+    HEADER="enter=󰿄  alt+󰁮 =󱂧  C-r=󰑕  C-x=󱃖  C-w=   C-e=󰇘  C-b=󰌍  C-u=  C-d= "
 
     RESULT=$(echo -e "${INPUT// /}" | \
         fzf-tmux \
             --bind "$BIND_ALT_BSPACE" \
             --bind "$BIND_CTRL_X" \
             --bind "$BIND_CTRL_E" \
+            --bind "$BIND_CTRL_B" \
             --bind "$BIND_CTRL_R" \
             --bind "$BIND_CTRL_W" \
             --bind "$BIND_ENTER" \

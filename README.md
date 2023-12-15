@@ -70,6 +70,7 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `C-w` will reload the list with all the available *windows* and their preview
 - `C-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
 - `C-e` will expand `PWD` and search for local directories to create additional session from
+- `C-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
 - `?` toggles the preview pane
 
 
