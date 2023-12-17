@@ -26,8 +26,8 @@ set -g @sessionx-bind '<mykey>'
 ```
 ### Additional configuration options:
 ```bash
-In-case you want to bind only `<mykey>` without the tmux `<prefix>`
-you will have to add an extra line to turn the prefix off.
+# In-case you want to bind only `<mykey>` without the tmux `<prefix>`
+# you will have to add the following line to turn the prefix off.
 set -g @sessionx-prefix off
 
 # `C-x` is a customizeable, by default it indexes directories in `$HOME/.config`, 
