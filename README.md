@@ -23,6 +23,13 @@ You can change it by adding this line with your desired key:
 # I recommend using `o` if not already in use, for least key strokes when launching
 set -g @sessionx-bind '<mykey>'
 ```
+The line above will let you use `<prefix>+<mykey>` to launch
+tmux-sessionx popup, in-case you want to bind only `<mykey>` without the tmux `<prefix>`
+you will have to add an extra line to turn the prefix off.
+```bash
+set -g @sessionx-prefix off
+
+```
 `C-x` is customizeable as well, by default it indexes `$HOME/.config`, but this can be changed by adding this config line:
 ```bash
 # e.g. set -g @sessionx-x-path '~/dotfiles'
