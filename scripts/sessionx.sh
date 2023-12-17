@@ -29,7 +29,7 @@ window_settings() {
 input() {
     default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
     if [[ "$default_window_mode" == "on" ]]; then
-        (tmux list-windows -a -F '#{session_name}:#{window_name}')
+        (tmux list-windows -a -F '#{session_name}:#{window_index}')
     else
         filter_current_session=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
         if [[ "$filter_current_session" == "true" ]]; then
@@ -92,7 +92,7 @@ run_plugin() {
     fi
     Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
     BIND_ALT_BSPACE="alt-bspace:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
-    BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_index} [#{window_name}]')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {1})"
+    BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_index}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {1})"
     CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
     BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
     BIND_CTRL_E="ctrl-e:reload(find $PWD -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
