@@ -96,10 +96,11 @@ run_plugin() {
     CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
     BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
     BIND_CTRL_E="ctrl-e:reload(find $PWD -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
-    BIND_CTRL_B="ctrl-b:reload(echo -e \"${INPUT// /}\")"
+    BIND_CTRL_T="ctrl-t:change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -t {1})"
+    BIND_CTRL_B="ctrl-b:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
     BIND_ENTER="enter:replace-query+print-query"
     BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
-    HEADER="enter=󰿄  alt+󰁮 =󱂧  C-r=󰑕  C-x=󱃖  C-w=   C-e=󰇘  C-b=󰌍  C-u=  C-d= "
+    HEADER="enter=󰿄  alt+󰁮 =󱂧  C-r=󰑕  C-x=󱃖  C-w=   C-e=󰇘  C-b=󰌍  C-t=󰐆   C-u=  C-d= "
 
     RESULT=$(echo -e "${INPUT// /}" | \
         fzf-tmux \
@@ -109,6 +110,7 @@ run_plugin() {
             --bind "$BIND_CTRL_B" \
             --bind "$BIND_CTRL_R" \
             --bind "$BIND_CTRL_W" \
+            --bind "$BIND_CTRL_T" \
             --bind "$BIND_ENTER" \
             --bind '?:toggle-preview' \
             --bind 'ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' \
