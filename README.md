@@ -66,10 +66,10 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `alt+backspace` will delete the selected session
 - `C-u` scroll preview up
 - `C-d` scroll preview down
-- `C-r` will launch a `read` prompt to rename a session within the list
-- `C-w` will reload the list with all the available *windows* and their preview
+- `C-r` "read": will launch a `read` prompt to rename a session within the list
+- `C-w` "window": will reload the list with all the available *windows* and their preview
 - `C-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
-- `C-e` will expand `PWD` and search for local directories to create additional session from
+- `C-e` "expand": will expand `PWD` and search for local directories to create additional session from
 - `C-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
 - `C-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
 - `?` toggles the preview pane
