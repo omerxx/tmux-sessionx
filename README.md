@@ -80,7 +80,7 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 
 
 ## WARNING ⚠️
-* If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see [configuration](#configure-⚙️))
+* If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see [configuration](#configure-%EF%B8%8F))
 * This plugin is not designed to be used outside Tmux, although PRs are happily recieved!
 
 
