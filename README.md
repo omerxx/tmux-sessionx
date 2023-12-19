@@ -58,6 +58,10 @@ set -g @sessionx-window-width '75%'
 # When set to 'on' a non-result will be sent to zoxide for path matching
 # Requires zoxide installed
 set -g @sessionx-zoxide-mode 'on'
+
+# If you're running fzf lower than 0.35.0 there are a few missing features
+# Upgrade, or use this setting for support
+set -g @sessionx-legacy-fzf-support 'on'
 ```
 
 ## Working with SessionX 👷
@@ -76,9 +80,8 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 
 
 ## WARNING ⚠️
-This was only tested on one, macOs machine.
-It is also not designed to use outside Tmux and is tailored to fit *my* needs.
-That said, please feel free to open issues with bugs / additions you'd like to see.
+* If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see #Configure)
+* This plugin is not designed to be used outside Tmux, although PRs are happily recieved!
 
 
 ## Thanks ❤️
