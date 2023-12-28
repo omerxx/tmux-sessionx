@@ -17,6 +17,15 @@ Add this to your `.tmux.conf` and run `Ctrl-I` for TPM to install the plugin.
 set -g @plugin 'omerxx/tmux-sessionx'
 ```
 
+### Installing in nix
+
+Currently only supported using flakes.
+
+1. Add `inputs.tmux-sessionx.url = "github:omerxx/tmux-sessionx";` to your flake
+2. Add `programs.tmux.plugins = [ inputs.tmux-sessionx.packages.<system>.default ];` to your system or home-manager configuration.
+
+Note: replace `<system>` with your system. (For example `x86_64-linux`)
+
 ## Configure ⚙️
 The default binding for this plugin is `<prefix>+O`
 You can change it by adding this line with your desired key:

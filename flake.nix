@@ -7,12 +7,6 @@
 
   outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} {
-      imports = [
-        # To import a flake module
-        # 1. Add foo to inputs
-        # 2. Add foo as a parameter to the outputs function
-        # 3. Add here: foo.flakeModule
-      ];
       systems = ["x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin"];
       perSystem = {
         config,
@@ -23,28 +17,49 @@
         lib,
         ...
       }: {
-        # Per-system attributes can be defined here. The self' and inputs'
-        # module parameters provide easy access to attributes of the same
-        # system.
-
-        # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
-        packages.default = pkgs.tmuxPlugins.mkTmuxPlugin {
-          pluginName = "sessionx";
-          version = "1.0";
-
-          src = pkgs.fetchFromGitHub {
-            owner = "omerxx";
-            repo = "tmux-sessionx";
-            rev = "847cf28";
-            hash = "sha256-cAh0S88pMlWBv5rEB11+jAxv/8fT/DGiO8eeFLFxQ/g=";
+        packages.default = with pkgs;
+          pkgs.tmuxPlugins.mkTmuxPlugin {
+            pluginName = "sessionx";
+            version = "unstable-2024-01-17";
+            src = fetchFromGitHub {
+              owner = "omerxx";
+              repo = "tmux-sessionx";
+              rev = "a87122c";
+              hash = "sha256-/VZyEIxqIn0ISgZ6u5TcYcXWRE+6SDK5JK1W34lKIKk=";
+            };
+            postInstall = ''
+              find $target -type f -print0 | xargs -0 sed -i -e 's|fzf-tmux |${pkgs.fzf}/bin/fzf-tmux |g'
+              find $target -type f -print0 | xargs -0 sed -i -e 's|zoxide |${pkgs.zoxide}/bin/zoxide |g'
+              find $target -type f -print0 | xargs -0 sed -i -e "s|\''${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx|$target|g"
+            '';
+            meta = with lib; {
+              homepage = "https://github.com/omerxx/tmux-sessionx";
+              description = "A fuzzy Tmux session manager with preview capabilities, deleting, renaming and more!";
+              # license = licenses.mit;
+              platforms = platforms.unix;
+              maintainers = with maintainers; [schromp];
+            };
           };
 
-          meta = with lib; {
-            description = "A fuzzy Tmux session manager with preview capabilities, deleting, renaming and more!";
-            homepage = "https://github.com/omerxx/tmux-sessionx";
-            platforms = platforms.all;
+        devShells.default = with pkgs; let
+          tmuxConfig = ''
+            run '${self'.packages.default}/share/tmux-plugins/sessionx/sessionx.tmux'
+
+            set -g @sessionx-zoxide-mode 'on'
+          '';
+        in
+          stdenv.mkDerivation {
+            name = "env";
+            buildInputs = [
+              self'.packages.default
+              tmux
+            ];
+            unpackPhase = ":";
+            installPhase = "touch $out";
+            shellHook = ''
+              echo "${tmuxConfig}" > $PWD/tmux.config
+            '';
           };
-        };
       };
     };
 }
