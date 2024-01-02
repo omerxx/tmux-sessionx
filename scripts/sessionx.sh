@@ -122,13 +122,13 @@ handle_args() {
         --prompt " " \
         --print-query \
         --tac \
-        --scrollbar '▌▐'\
         )
 
     legacy=$(tmux_option_or_fallback "@sessionx-legacy-fzf-support" "off")
     if [[ "${legacy}" == "off" ]]; then
         args+=(--border-label "Current session: \"$CURRENT\" ")
         args+=(--bind 'focus:transform-preview-label:echo [ {} ]')
+        args+=(--scrollbar '▌▐')
     fi
 
 }
