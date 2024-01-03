@@ -1,38 +1,50 @@
 # Tmux SessionX
+
 A fuzzy Tmux session manager with preview capabilities, deleting, renaming and more!
 
 ![image](./img/sessionxv2.png)
 
-
 ## Prerequisits 🛠️
+
 - [tpm](https://github.com/tmux-plugins/tpm)
 - [fzf](https://github.com/junegunn/fzf) (specifically [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script))
 - [bat](https://github.com/sharkdp/bat)
 - Optional: [zoxide](https://github.com/ajeetdsouza/zoxide)
 
-
 ## Install 💻
+
 Add this to your `.tmux.conf` and run `Ctrl-I` for TPM to install the plugin.
+
 ```conf
 set -g @plugin 'omerxx/tmux-sessionx'
 ```
 
 ## Configure ⚙️
+
 The default binding for this plugin is `<prefix>+O`
 You can change it by adding this line with your desired key:
+
 ```bash
 # I recommend using `o` if not already in use, for least key strokes when launching
 set -g @sessionx-bind '<mykey>'
 ```
+
 ### Additional configuration options:
+
 ```bash
-# `C-x` is a customizeable, by default it indexes directories in `$HOME/.config`, 
+# By default, tmux `<prefix>` key needs to pressed before `<mykey>` to launch
+# sessionx. In case you just want to bind '<mykey>' without the tmux '<prefix>'
+# add the following line to turn the prefix off. This option is set to
+# on by defaut.
+set -g @sessionx-prefix off
+
+# `C-x` is a customizeable, by default it indexes directories in `$HOME/.config`,
 # but this can be changed by adding the config below.
 # e.g. set -g @sessionx-x-path '~/dotfiles'
 set -g @sessionx-x-path '<some-path>'
 
-# A comma delimited absolute-paths list of custom paths 
-# always visible in results and ready to create a session from. 
+# A comma delimited absolute-paths list of custom paths
+# always visible in results and ready to create a session from.
 # Tip: if you're using zoxide mode, there's a good chance this is redundant
 set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
 
@@ -40,11 +52,11 @@ set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
 # This is to support quick switch of sessions
 # Only after other actions (e.g. rename) will the current session appear
 # Setting this option to 'false' changes this default behavior
-set -g @sessionx-filter-current 'false' 
+set -g @sessionx-filter-current 'false'
 
 # Window mode can be turned on so that the default layout
 # Has all the windows listed rather than sessions only
-set -g @sessionx-window-mode 'on' 
+set -g @sessionx-window-mode 'on'
 
 # Preview location and screenspace can be adjusted with these
 # Reminder: it can be toggeled on/off with `?`
@@ -65,27 +77,30 @@ set -g @sessionx-legacy-fzf-support 'on'
 ```
 
 ## Working with SessionX 👷
+
 Launching the plugin pops up an fzf-tmux "popup" with fizzy search over existing session (-current session).
 If you insert a non-existing name and hit enter, a new session with that name will be created.
+
 - `alt+backspace` will delete the selected session
 - `C-u` scroll preview up
 - `C-d` scroll preview down
 - `C-r` "read": will launch a `read` prompt to rename a session within the list
-- `C-w` "window": will reload the list with all the available *windows* and their preview
+- `C-w` "window": will reload the list with all the available _windows_ and their preview
 - `C-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
 - `C-e` "expand": will expand `PWD` and search for local directories to create additional session from
 - `C-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
 - `C-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
 - `?` toggles the preview pane
 
-
 ## WARNING ⚠️
-* If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see [configuration](#additional-configuration-options))
-* This plugin is not designed to be used outside Tmux, although PRs are happily recieved!
 
+- If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see [configuration](#additional-configuration-options))
+- This plugin is not designed to be used outside Tmux, although PRs are happily recieved!
 
 ## Thanks ❤️
+
 Inspired by these:
+
 - https://github.com/joshmedeski/t-smart-tmux-session-manager
 - https://github.com/ThePrimeagen/.dotfiles/blob/master/bin/.local/scripts/tmux-sessionizer
 - https://crates.io/crates/tmux-sessionizer
