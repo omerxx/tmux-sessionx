@@ -32,8 +32,10 @@ set -g @sessionx-bind '<mykey>'
 ### Additional configuration options:
 
 ```bash
-# In case you want to bind only '<mykey>' without the tmux '<prefix>'
-# you will have to add the following line to turn the prefix off.
+# By default, tmux `<prefix>` key needs to pressed before `<mykey>` to launch
+# sessionx. In case you just want to bind '<mykey>' without the tmux '<prefix>'
+# add the following line to turn the prefix off. This option is set to
+# on by defaut.
 set -g @sessionx-prefix off
 
 # `C-x` is a customizeable, by default it indexes directories in `$HOME/.config`,
@@ -68,6 +70,10 @@ set -g @sessionx-window-width '75%'
 # When set to 'on' a non-result will be sent to zoxide for path matching
 # Requires zoxide installed
 set -g @sessionx-zoxide-mode 'on'
+
+# If you're running fzf lower than 0.35.0 there are a few missing features
+# Upgrade, or use this setting for support
+set -g @sessionx-legacy-fzf-support 'on'
 ```
 
 ## Working with SessionX 👷
@@ -78,18 +84,18 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `alt+backspace` will delete the selected session
 - `C-u` scroll preview up
 - `C-d` scroll preview down
-- `C-r` will launch a `read` prompt to rename a session within the list
-- `C-w` will reload the list with all the available _windows_ and their preview
+- `C-r` "read": will launch a `read` prompt to rename a session within the list
+- `C-w` "window": will reload the list with all the available _windows_ and their preview
 - `C-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
-- `C-e` will expand `PWD` and search for local directories to create additional session from
+- `C-e` "expand": will expand `PWD` and search for local directories to create additional session from
 - `C-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
+- `C-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
 - `?` toggles the preview pane
 
 ## WARNING ⚠️
 
-This was only tested on one, macOs machine.
-It is also not designed to use outside Tmux and is tailored to fit _my_ needs.
-That said, please feel free to open issues with bugs / additions you'd like to see.
+- If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see [configuration](#additional-configuration-options))
+- This plugin is not designed to be used outside Tmux, although PRs are happily recieved!
 
 ## Thanks ❤️
 
