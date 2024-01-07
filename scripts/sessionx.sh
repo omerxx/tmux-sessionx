@@ -140,11 +140,11 @@ handle_args() {
         --bind "$NEW_WINDOW" \
         --bind "$BACK" \
         --bind "$KILL_SESSION" \
-        --bind "$ACCEPT" \
         --bind "$DELETE" \
         --bind "$EXIT" \
         --bind "$SELECT_UP" \
         --bind "$SELECT_DOWN" \
+        --bind "$ACCEPT" \
         --bind "$SCROLL_UP" \
         --bind "$SCROLL_DOWN" \
         --bind "$RENAME_SESSION" \
