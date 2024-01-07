@@ -26,6 +26,26 @@ window_settings() {
     window_width=$(tmux_option_or_fallback "@sessionx-window-width" "75%")
 }
 
+handle_binds() {
+  bind_tree_mode=$(tmux_option_or_fallback "@sessionx-bind-tree-mode" "ctrl-t")
+  bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-w")
+  bind_configuration_mode=$(tmux_option_or_fallback "@sessionx-bind-configuration-path" "ctrl-x")
+
+  bind_back=$(tmux_option_or_fallback "@sessionx-bind-back" "ctrl-b")
+  bind_new_window=$(tmux_option_or_fallback "@sessionx-bind-new-window" "ctrl-e")
+  bind_kill_session=$(tmux_option_or_fallback "@sessionx-bind-kill-session" "alt-bspace")
+
+  bind_exit=$(tmux_option_or_fallback "@sessionx-bind-abort" "esc")
+  bind_accept=$(tmux_option_or_fallback "@sessionx-bind-accept" "enter")
+  bind_delete_char=$(tmux_option_or_fallback "@sessionx-bind-delete-char" "bspace")
+
+  bind_scroll_up=$(tmux_option_or_fallback "@sessionx-bind-scroll-up" "ctrl-p")
+  bind_scroll_down=$(tmux_option_or_fallback "@sessionx-bind-scroll-down" "ctrl-d")
+
+  bind_select_up=$(tmux_option_or_fallback "@sessionx-bind-select-up" "ctrl-n")
+  bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-m")
+}
+
 input() {
     default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
     if [[ "$default_window_mode" == "on" ]]; then
@@ -50,8 +70,8 @@ additional_input() {
         for i in ${custom_paths//,/ }; do
             if [[ $sessions == *"${i##*/}"* ]]; then
                 continue
-            fi
-            list+=("${i}\n")
+              fi
+              list+=("${i}\n")
             last=$i
         done
         unset 'list[${#list[@]}-1]'
@@ -75,11 +95,11 @@ handle_output() {
                 z_target=$(zoxide query "$target")
                 tmux new-session -ds "$target" -c "$z_target" -n "$z_target"
             else
-                tmux new-session -ds "$target" 
+                tmux new-session -ds "$target"
             fi
         fi
     fi
-    tmux switch-client -t "$target" 
+    tmux switch-client -t "$target"
 }
 
 handle_args() {
@@ -89,28 +109,46 @@ handle_args() {
         INPUT="$(additional_input)\n$INPUT"
     fi
     Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
-    BIND_ALT_BSPACE="alt-bspace:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
-    BIND_CTRL_W="ctrl-w:reload(tmux list-windows -a -F '#{session_name}:#{window_index}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {1})"
-    CTRL_X_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
-    BIND_CTRL_X="ctrl-x:reload(find $CTRL_X_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
-    BIND_CTRL_E="ctrl-e:reload(find $PWD -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
-    BIND_CTRL_T="ctrl-t:change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -t {1})"
-    BIND_CTRL_B="ctrl-b:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
-    BIND_ENTER="enter:replace-query+print-query"
-    BIND_CTRL_R='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
-    HEADER="enter=󰿄  alt+󰁮 =󱂧  C-r=󰑕  C-x=󱃖  C-w=   C-e=󰇘  C-b=󰌍  C-t=󰐆   C-u=  C-d= "
+    CONFIGURATION_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
+
+    TREE_MODE="$bind_tree_mode:change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -t {1})"
+    CONFIGURATION_MODE="$bind_configuration_mode:reload(find $CONFIGURATION_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
+    WINDOWS_MODE="$bind_window_mode:reload(tmux list-windows -a -F '#{session_name}:#{window_index}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {1})"
+
+    NEW_WINDOW="$bind_new_window:reload(find $PWD -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
+    BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+    KILL_SESSION="$bind_kill_session:execute(tmux kill-session -t {})+reload(tmux list-sessions | sed -E 's/:.*$//' | grep -v $(tmux display-message -p '#S'))"
+
+    ACCEPT="$bind_accept:replace-query+print-query"
+    DELETE="$bind_delete_char:backward-delete-char"
+    EXIT="$bind_exit:abort"
+
+    SELECT_UP="$bind_select_up:up"
+    SELECT_DOWN="$bind_select_down:down"
+    SCROLL_UP="$bind_scroll_up:preview-half-page-up"
+    SCROLL_DOWN="$bind_scroll_down:preview-half-page-down"
+
+    RENAME_SESSION='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
+
+    HEADER="$bind_accept=󰿄  $bind_kill_session=󱂧  C-r=󰑕  $bind_configuration_mode=󱃖  $bind_window_mode=   $bind_new_window=󰇘  $bind_back=󰌍  $bind_tree_mode=󰐆   $bind_scroll_up=  $bind_scroll_down= "
+
 
     args=(
-        --bind "$BIND_ALT_BSPACE" \
-        --bind "$BIND_CTRL_X" \
-        --bind "$BIND_CTRL_E" \
-        --bind "$BIND_CTRL_B" \
-        --bind "$BIND_CTRL_R" \
-        --bind "$BIND_CTRL_W" \
-        --bind "$BIND_CTRL_T" \
-        --bind "$BIND_ENTER" \
+        --bind "$TREE_MODE" \
+        --bind "$CONFIGURATION_MODE" \
+        --bind "$WINDOWS_MODE" \
+        --bind "$NEW_WINDOW" \
+        --bind "$BACK" \
+        --bind "$KILL_SESSION" \
+        --bind "$ACCEPT" \
+        --bind "$DELETE" \
+        --bind "$EXIT" \
+        --bind "$SELECT_UP" \
+        --bind "$SELECT_DOWN" \
+        --bind "$SCROLL_UP" \
+        --bind "$SCROLL_DOWN" \
+        --bind "$RENAME_SESSION" \
         --bind '?:toggle-preview' \
-        --bind 'ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down' \
         --bind 'change:first' \
         --color 'pointer:9,spinner:92,marker:46' \
         --exit-0 \
@@ -136,8 +174,9 @@ handle_args() {
 run_plugin() {
     preview_settings
     window_settings
+    handle_binds
     handle_args
-    RESULT=$(echo -e "${INPUT// /}" | fzf-tmux "${args[@]}") 
+    RESULT=$(echo -e "${INPUT// /}" | fzf-tmux "${args[@]}")
 }
 
 run_plugin
