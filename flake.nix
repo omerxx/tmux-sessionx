@@ -50,7 +50,7 @@
           postInstall = ''
             chmod +x $target/scripts/sessionx.sh
             wrapProgram $target/scripts/sessionx.sh \
-              --prefix PATH : ${with pkgs; lib.makeBinPath [ tmuxPlugins.tmux-fzf gnugrep gnused coreutils ]}
+              --prefix PATH : ${with pkgs; lib.makeBinPath [ zoxide fzf gnugrep gnused coreutils ]}
             chmod +x $target/scripts/preview.sh
             wrapProgram $target/scripts/preview.sh \
               --prefix PATH : ${with pkgs; lib.makeBinPath [ coreutils gnugrep gnused ]}
