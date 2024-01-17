@@ -17,15 +17,6 @@ Add this to your `.tmux.conf` and run `Ctrl-I` for TPM to install the plugin.
 set -g @plugin 'omerxx/tmux-sessionx'
 ```
 
-### Installing in nix
-
-Currently only supported using flakes.
-
-1. Add `inputs.tmux-sessionx.url = "github:omerxx/tmux-sessionx";` to your flake
-2. Add `programs.tmux.plugins = [ inputs.tmux-sessionx.packages.<system>.default ];` to your system or home-manager configuration.
-
-Note: replace `<system>` with your system. (For example `x86_64-linux`)
-
 ## Configure ⚙️
 The default binding for this plugin is `<prefix>+O`
 You can change it by adding this line with your desired key:
@@ -143,6 +134,21 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 ## WARNING ⚠️
 * If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see [configuration](#additional-configuration-options))
 * This plugin is not designed to be used outside Tmux, although PRs are happily recieved!
+
+## Nix
+
+### Installing
+
+Currently only supported using flakes.
+
+1. Add `inputs.tmux-sessionx.url = "github:omerxx/tmux-sessionx";` to your flake
+2. Add `programs.tmux.plugins = [ inputs.tmux-sessionx.packages.<system>.default ];` to your system or home-manager configuration.
+
+Note: replace `<system>` with your system. (For example `x86_64-linux`)
+
+### Testing the flake output
+
+Use `nix-develop -i` to test the plugin in a pure environment.
 
 
 ## Thanks ❤️
