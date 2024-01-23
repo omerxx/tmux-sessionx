@@ -46,6 +46,10 @@ set -g @sessionx-filter-current 'false'
 # Has all the windows listed rather than sessions only
 set -g @sessionx-window-mode 'on'
 
+# Tree mode can be enabled which means that instead of a preview,
+# a hierarchy of sessions and windows will be shown
+set -g @sessionx-tree-mode 'on'
+
 # Preview location and screenspace can be adjusted with these
 # Reminder: it can be toggeled on/off with `?`
 set -g @sessionx-preview-location 'right'
