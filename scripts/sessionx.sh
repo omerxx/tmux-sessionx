@@ -17,6 +17,10 @@ preview_settings() {
     if [[ "$default_window_mode" == "on" ]]; then
         PREVIEW_OPTIONS="-w"
     fi
+    default_window_mode=$(tmux_option_or_fallback "@sessionx-tree-mode" "off")
+    if [[ "$default_window_mode" == "on" ]]; then
+        PREVIEW_OPTIONS="-t"
+    fi
     preview_location=$(tmux_option_or_fallback "@sessionx-preview-location" "top")
     preview_ratio=$(tmux_option_or_fallback "@sessionx-preview-ratio" "75%")
 }
