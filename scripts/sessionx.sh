@@ -23,6 +23,7 @@ preview_settings() {
     fi
     preview_location=$(tmux_option_or_fallback "@sessionx-preview-location" "top")
     preview_ratio=$(tmux_option_or_fallback "@sessionx-preview-ratio" "75%")
+    preview_enabled=$(tmux_option_or_fallback "@sessionx-preview-enabled" "true")
 }
 
 window_settings() {
@@ -115,6 +116,9 @@ handle_args() {
     if [[ -n $ADDITIONAL_INPUT ]]; then
         INPUT="$(additional_input)\n$INPUT"
     fi
+    if [[ "$preview_enabled" == "true" ]]; then
+        PREVIEW_LINE="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh ${PREVIEW_OPTIONS} {}"
+    fi
     Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
     CONFIGURATION_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
 
@@ -160,7 +164,7 @@ handle_args() {
         --color 'pointer:9,spinner:92,marker:46' \
         --exit-0 \
         --header="$HEADER" \
-        --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh ${PREVIEW_OPTIONS} {}" \
+        --preview="${PREVIEW_LINE}" \
         --preview-window="${preview_location},${preview_ratio},," \
         --layout="$layout_mode" \
         --pointer=$pointer_icon \
