@@ -28,6 +28,9 @@ preview_settings() {
 window_settings() {
     window_height=$(tmux_option_or_fallback "@sessionx-window-height" "75%")
     window_width=$(tmux_option_or_fallback "@sessionx-window-width" "75%")
+    layout_mode=$(tmux_option_or_fallback "@sessionx-layout" "default")
+    prompt_icon=$(tmux_option_or_fallback "@sessionx-prompt" " ")
+    pointer_icon=$(tmux_option_or_fallback "@sessionx-pointer" "▶")
 }
 
 handle_binds() {
@@ -159,9 +162,10 @@ handle_args() {
         --header="$HEADER" \
         --preview="${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh ${PREVIEW_OPTIONS} {}" \
         --preview-window="${preview_location},${preview_ratio},," \
-        --pointer='▶' \
+        --layout="$layout_mode" \
+        --pointer=$pointer_icon \
         -p "$window_width,$window_height" \
-        --prompt " " \
+        --prompt $prompt_icon \
         --print-query \
         --tac \
         --scrollbar '▌▐'\

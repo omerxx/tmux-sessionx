@@ -59,6 +59,15 @@ set -g @sessionx-preview-ratio '55%'
 set -g @sessionx-window-height '90%'
 set -g @sessionx-window-width '75%'
 
+# If you want change the layout to top you can set
+set -g @sessionx-layout 'reverse'
+
+# If you want to change the prompt
+set -g @sessionx-prompt ''
+
+# If you want to change the pointer
+set -g @sessionx-pointer '▶'
+
 # When set to 'on' a non-result will be sent to zoxide for path matching
 # Requires zoxide installed
 set -g @sessionx-zoxide-mode 'on'
