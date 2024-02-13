@@ -6,7 +6,8 @@ A fuzzy Tmux session manager with preview capabilities, deleting, renaming and m
 
 ## Prerequisits 🛠️
 - [tpm](https://github.com/tmux-plugins/tpm)
-- [fzf](https://github.com/junegunn/fzf) (specifically [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script))
+- [fzf](https://github.com/junegunn/fzf)  
+- [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script)
 - [bat](https://github.com/sharkdp/bat)
 - Optional: [zoxide](https://github.com/ajeetdsouza/zoxide)
 
