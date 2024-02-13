@@ -56,6 +56,9 @@ set -g @sessionx-tree-mode 'on'
 set -g @sessionx-preview-location 'right'
 set -g @sessionx-preview-ratio '55%'
 
+# The preview can also be disabled altogether
+set -g @sessionx-preview-enabled 'false'
+
 # Change window dimensions
 set -g @sessionx-window-height '90%'
 set -g @sessionx-window-width '75%'
