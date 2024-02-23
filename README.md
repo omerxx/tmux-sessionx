@@ -14,6 +14,7 @@ A fuzzy Tmux session manager with preview capabilities, deleting, renaming and m
 
 ## Install 💻
 Add this to your `.tmux.conf` and run `Ctrl-I` for TPM to install the plugin.
+And here's another option
 ```conf
 set -g @plugin 'omerxx/tmux-sessionx'
 ```
