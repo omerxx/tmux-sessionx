@@ -68,9 +68,11 @@ set -g @sessionx-layout 'reverse'
 
 # If you want to change the prompt
 set -g @sessionx-prompt ''
+# If you want to change the prompt, the space is nedded to not overlap the icon
+set -g @sessionx-prompt " "
 
 # If you want to change the pointer
-set -g @sessionx-pointer '▶'
+set -g @sessionx-pointer "▶ "
 
 # When set to 'on' a non-result will be sent to zoxide for path matching
 # Requires zoxide installed
