@@ -139,7 +139,9 @@ handle_args() {
     SCROLL_UP="$bind_scroll_up:preview-half-page-up"
     SCROLL_DOWN="$bind_scroll_down:preview-half-page-down"
 
-    RENAME_SESSION='ctrl-r:execute(printf >&2 "New name: ";read name; tmux rename-session -t {} ${name};)+reload(tmux list-sessions | sed -E "s/:.*$//")'
+    RENAME_SESSION_EXEC='bash -c '\'' printf >&2 "New name: ";read name; tmux rename-session -t {} ${name}; '\'''
+    RENAME_SESSION_RELOAD='bash -c '\'' tmux list-sessions | sed -E "s/:.*$//"; '\'''
+    RENAME_SESSION="ctrl-r:execute($RENAME_SESSION_EXEC)+reload($RENAME_SESSION_RELOAD)"
 
     HEADER="$bind_accept=󰿄  $bind_kill_session=󱂧  C-r=󰑕  $bind_configuration_mode=󱃖  $bind_window_mode=   $bind_new_window=󰇘  $bind_back=󰌍  $bind_tree_mode=󰐆   $bind_scroll_up=  $bind_scroll_down= "
 
