@@ -88,18 +88,18 @@ If you want to change the default key bindings, you can do using this configurat
 set -g @sessionx-bind-accept 'alt-j'
 
 # This command opens the current window list.
-# By default, it is set to `C-w`.
+# By default, it is set to `ctrl-w`.
 set -g @sessionx-bind-window-mode 'alt-s'
 
 # This command opens the tree.
-# By default, it is set to `C-t`.
+# By default, it is set to `ctrl-t`.
 set -g @sessionx-bind-tree-mode 'alt-w'
 
 # This command opens the configuration path.
-# By default, it is set to `C-x`.
+# By default, it is set to `ctrl-x`.
 set -g @sessionx-bind-new-window 'alt-c'
 
-# By default, it is set to `C-r`.
+# By default, it is set to `ctrl-r`.
 set -g @sessionx-bind-read 'alt-r'
 
 # This command rebinds scrolling up/down inside the preview.
