@@ -169,7 +169,7 @@ handle_args() {
         --layout="$layout_mode" \
         --pointer=$pointer_icon \
         -p "$window_width,$window_height" \
-        --prompt $prompt_icon \
+        --prompt "$prompt_icon" \
         --print-query \
         --tac \
         --scrollbar '▌▐'\
