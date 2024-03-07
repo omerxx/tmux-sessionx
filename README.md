@@ -66,8 +66,6 @@ set -g @sessionx-window-width '75%'
 # If you want change the layout to top you can set
 set -g @sessionx-layout 'reverse'
 
-# If you want to change the prompt
-set -g @sessionx-prompt ''
 # If you want to change the prompt, the space is nedded to not overlap the icon
 set -g @sessionx-prompt " "
 
@@ -106,7 +104,7 @@ set -g @sessionx-bind-tree-mode 'alt-w'
 set -g @sessionx-bind-new-window 'alt-c'
 
 # By default, it is set to `C-r`.
-set -g @sessionx-bind-read 'alt-r'
+set -g @sessionx-bind-kill-session 'alt-r'
 
 # This command rebinds scrolling up/down inside the preview.
 set -g @sessionx-bind-scroll-up 'alt-m'
