@@ -70,23 +70,22 @@ input() {
 }
 
 additional_input() {
+
     sessions=$(tmux list-sessions | sed -E 's/:.*$//')
     custom_paths=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
     list=()
     if [[ -z "$custom_paths" ]]; then
         echo ""
     else
-        for i in ${custom_paths//,/ }; do
+        clean_paths=$(echo $custom_paths | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed  -E 's/ /✗/g' )
+        for i in ${clean_paths//,/$IFS}; do
             if [[ $sessions == *"${i##*/}"* ]]; then
                 continue
-              fi
-              list+=("${i}\n")
-            last=$i
+            fi
+            echo $i
         done
-        unset 'list[${#list[@]}-1]'
-        list+=("${last}")
-        echo "${list[@]}"
     fi
+
 }
 
 handle_output() {
@@ -191,7 +190,7 @@ run_plugin() {
     window_settings
     handle_binds
     handle_args
-    RESULT=$(echo -e "${INPUT// /}" | fzf-tmux "${args[@]}")
+    RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${args[@]}")
 }
 
 run_plugin
