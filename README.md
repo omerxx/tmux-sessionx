@@ -128,7 +128,7 @@ set -g @sessionx-bind-tree-mode 'alt-w'
 set -g @sessionx-bind-new-window 'alt-c'
 
 # By default, it is set to `ctrl-r`.
-set -g @sessionx-bind-read 'alt-r'
+set -g @sessionx-bind-rename-session 'alt-r'
 
 # This command rebinds scrolling up/down inside the preview.
 set -g @sessionx-bind-scroll-up 'alt-m'
