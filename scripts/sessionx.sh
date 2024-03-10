@@ -54,7 +54,7 @@ handle_binds() {
   bind_select_up=$(tmux_option_or_fallback "@sessionx-bind-select-up" "ctrl-n")
   bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-m")
 
-  fzf_options=$(tmux_option_or_fallback "@sessionx-fzf-options" "--color 'pointer:9,spinner:92,marker:46'" )
+  fzf_options=$(tmux_option_or_fallback "@sessionx-fzf-options" "--color pointer:9,spinner:92,marker:46")
 }
 
 input() {
