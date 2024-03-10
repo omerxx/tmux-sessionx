@@ -76,6 +76,11 @@ set -g @sessionx-pointer "▶ "
 # Requires zoxide installed
 set -g @sessionx-zoxide-mode 'on'
 
+# If you want to pass in your own FZF options. This is passed in before all other
+# arguments to FZF to ensure that other options like `sessionx-pointer` and 
+# `sessionx-window-height/width` still work. See `man fzf` for config options.
+set -g @sessionx-fzf-options "--color 'pointer:9,spinner:92,marker:46'"
+
 # If you're running fzf lower than 0.35.0 there are a few missing features
 # Upgrade, or use this setting for support
 set -g @sessionx-legacy-fzf-support 'on'
