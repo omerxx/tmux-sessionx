@@ -54,7 +54,6 @@ handle_binds() {
   bind_select_up=$(tmux_option_or_fallback "@sessionx-bind-select-up" "ctrl-n")
   bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-m")
 
-  fzf_options=$(tmux_option_or_fallback "@sessionx-fzf-options" "--color pointer:9,spinner:92,marker:46")
 }
 
 input() {
@@ -150,7 +149,6 @@ handle_args() {
 
 
     args=(
-        $fzf_options \
         --bind "$TREE_MODE" \
         --bind "$CONFIGURATION_MODE" \
         --bind "$WINDOWS_MODE" \
@@ -186,6 +184,8 @@ handle_args() {
         args+=(--bind 'focus:transform-preview-label:echo [ {} ]')
     fi
 
+    additional_fzf_options=$(tmux_option_or_fallback "@sessionx-fzf-options" "--color pointer:9,spinner:92,marker:46")
+    eval "fzf_opts=($additional_fzf_options)"
 }
 
 run_plugin() {
@@ -193,7 +193,7 @@ run_plugin() {
     window_settings
     handle_binds
     handle_args
-    RESULT=$(echo -e "${INPUT// /}" | fzf-tmux "${args[@]}")
+    RESULT=$(echo -e "${INPUT// /}" | fzf-tmux "$fzf_opts[@] $args[@]")
 }
 
 run_plugin
