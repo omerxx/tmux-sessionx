@@ -93,14 +93,14 @@ Launching the plugin pops up an fzf-tmux "popup" with fizzy search over existing
 If you insert a non-existing name and hit enter, a new session with that name will be created.
 
 - `alt+backspace` will delete the selected session
-- `C-u` scroll preview up
-- `C-d` scroll preview down
-- `C-r` "read": will launch a `read` prompt to rename a session within the list
-- `C-w` "window": will reload the list with all the available _windows_ and their preview
-- `C-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
-- `C-e` "expand": will expand `PWD` and search for local directories to create additional session from
-- `C-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
-- `C-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
+- `Ctrl-u` scroll preview up
+- `Ctrl-d` scroll preview down
+- `Ctrl-r` "read": will launch a `read` prompt to rename a session within the list
+- `Ctrl-w` "window": will reload the list with all the available _windows_ and their preview
+- `Ctrl-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
+- `Ctrl-e` "expand": will expand `PWD` and search for local directories to create additional session from
+- `Ctrl-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
+- `Ctrl-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
 - `?` toggles the preview pane
 
 ### Rebind keys:
