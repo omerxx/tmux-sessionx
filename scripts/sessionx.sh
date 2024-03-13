@@ -70,7 +70,6 @@ input() {
 }
 
 additional_input() {
-
     sessions=$(tmux list-sessions | sed -E 's/:.*$//')
     custom_paths=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
     list=()
@@ -85,7 +84,6 @@ additional_input() {
             echo $i
         done
     fi
-
 }
 
 handle_output() {
