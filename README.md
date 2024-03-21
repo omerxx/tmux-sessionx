@@ -1,31 +1,37 @@
 # Tmux SessionX
+
 A fuzzy Tmux session manager with preview capabilities, deleting, renaming and more!
 
 ![image](./img/sessionxv2.png)
 
-
 ## Prerequisits 🛠️
+
 - [tpm](https://github.com/tmux-plugins/tpm)
-- [fzf](https://github.com/junegunn/fzf)  
+- [fzf](https://github.com/junegunn/fzf)
 - [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script)
 - [bat](https://github.com/sharkdp/bat)
 - Optional: [zoxide](https://github.com/ajeetdsouza/zoxide)
 
-
 ## Install 💻
+
 Add this to your `.tmux.conf` and run `Ctrl-I` for TPM to install the plugin.
+
 ```conf
 set -g @plugin 'omerxx/tmux-sessionx'
 ```
 
 ## Configure ⚙️
+
 The default binding for this plugin is `<prefix>+O`
 You can change it by adding this line with your desired key:
+
 ```bash
 # I recommend using `o` if not already in use, for least key strokes when launching
 set -g @sessionx-bind '<mykey>'
 ```
+
 ### Additional configuration options:
+
 ```bash
 # `C-x` is a customizeable, by default it indexes directories in `$HOME/.config`,
 # but this can be changed by adding the config below.
@@ -86,8 +92,26 @@ set -g @sessionx-additional-options "--color pointer:9,spinner:92,marker:46"
 set -g @sessionx-legacy-fzf-support 'on'
 ```
 
-### Bind keys:
+## Working with SessionX 👷
+
+Launching the plugin pops up an fzf-tmux "popup" with fizzy search over existing session (-current session).
+If you insert a non-existing name and hit enter, a new session with that name will be created.
+
+- `alt+backspace` will delete the selected session
+- `Ctrl-u` scroll preview up
+- `Ctrl-d` scroll preview down
+- `Ctrl-r` "read": will launch a `read` prompt to rename a session within the list
+- `Ctrl-w` "window": will reload the list with all the available _windows_ and their preview
+- `Ctrl-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
+- `Ctrl-e` "expand": will expand `PWD` and search for local directories to create additional session from
+- `Ctrl-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
+- `Ctrl-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
+- `?` toggles the preview pane
+
+### Rebind keys:
+
 If you want to change the default key bindings, you can do using this configuration options:
+
 ```bash
 # Configuring Key Bindings:
 # I've remapped these commands to 'alt'.
@@ -97,18 +121,18 @@ If you want to change the default key bindings, you can do using this configurat
 set -g @sessionx-bind-accept 'alt-j'
 
 # This command opens the current window list.
-# By default, it is set to `C-w`.
+# By default, it is set to `ctrl-w`.
 set -g @sessionx-bind-window-mode 'alt-s'
 
 # This command opens the tree.
-# By default, it is set to `C-t`.
+# By default, it is set to `ctrl-t`.
 set -g @sessionx-bind-tree-mode 'alt-w'
 
 # This command opens the configuration path.
-# By default, it is set to `C-x`.
+# By default, it is set to `ctrl-x`.
 set -g @sessionx-bind-new-window 'alt-c'
 
-# By default, it is set to `C-r`.
+# By default, it is set to `ctrl-r`.
 set -g @sessionx-bind-rename-session 'alt-r'
 
 # This command rebinds scrolling up/down inside the preview.
@@ -138,34 +162,22 @@ set -g @sessionx-bind-delete-char 'alt-p'
 set -g @sessionx-bind-abort 'alt-q'
 ```
 
-## Working with SessionX 👷
-Launching the plugin pops up an fzf-tmux "popup" with fizzy search over existing session (-current session).
-If you insert a non-existing name and hit enter, a new session with that name will be created.
-- `alt+backspace` will delete the selected session
-- `C-u` scroll preview up
-- `C-d` scroll preview down
-- `C-r` "read": will launch a `read` prompt to rename a session within the list
-- `C-w` "window": will reload the list with all the available *windows* and their preview
-- `C-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
-- `C-e` "expand": will expand `PWD` and search for local directories to create additional session from
-- `C-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
-- `C-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
-- `?` toggles the preview pane
-
-
 ## WARNING ⚠️
-* If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see [configuration](#additional-configuration-options))
-* This plugin is not designed to be used outside Tmux, although PRs are happily recieved!
 
+- If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see [configuration](#additional-configuration-options))
+- This plugin is not designed to be used outside Tmux, although PRs are happily recieved!
 
 ## Thanks ❤️
+
 Inspired by these:
+
 - https://github.com/joshmedeski/t-smart-tmux-session-manager
 - https://github.com/ThePrimeagen/.dotfiles/blob/master/bin/.local/scripts/tmux-sessionizer
 - https://crates.io/crates/tmux-sessionizer
 - https://github.com/petobens/dotfiles/commit/c21c306660142d93d283186210ad9d301a2f5186
 
 ## Contributors
+
 <a href="https://github.com/omerxx/tmux-sessionx/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=omerxx/tmux-sessionx" />
 </a>

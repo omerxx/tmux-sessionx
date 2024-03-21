@@ -60,7 +60,7 @@ handle_binds() {
 input() {
     default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
     if [[ "$default_window_mode" == "on" ]]; then
-        (tmux list-windows -a -F '#{session_name}:#{window_index}')
+        (tmux list-windows -a -F '#{session_name}:#{window_index} #{window_name}')
     else
         filter_current_session=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
         if [[ "$filter_current_session" == "true" ]]; then
@@ -92,7 +92,8 @@ additional_input() {
 }
 
 handle_output() {
-    target=$(echo "$1" | tr -d '\n')
+    args=($1)
+    target=$(echo "${args[0]}" | tr -d '\n')
     if [[ -z "$target" ]]; then
         exit 0
     fi
