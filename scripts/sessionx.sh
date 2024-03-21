@@ -39,6 +39,7 @@ handle_binds() {
   bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-w")
   bind_configuration_mode=$(tmux_option_or_fallback "@sessionx-bind-configuration-path" "ctrl-x")
   bind_rename_session=$(tmux_option_or_fallback "@sessionx-bind-rename-session" "ctrl-r")
+	additional_fzf_options=$(tmux_option_or_fallback "@sessionx-fzf-options" "--color pointer:9,spinner:92,marker:46")
 
   bind_back=$(tmux_option_or_fallback "@sessionx-bind-back" "ctrl-b")
   bind_new_window=$(tmux_option_or_fallback "@sessionx-bind-new-window" "ctrl-e")
@@ -184,8 +185,7 @@ handle_args() {
         args+=(--bind 'focus:transform-preview-label:echo [ {} ]')
     fi
 
-    additional_fzf_options=$(tmux_option_or_fallback "@sessionx-fzf-options" "--color pointer:9,spinner:92,marker:46")
-    eval "fzf_opts=($additional_fzf_options)"
+	eval "fzf_opts=($additional_fzf_options)"
 }
 
 run_plugin() {
@@ -193,7 +193,7 @@ run_plugin() {
     window_settings
     handle_binds
     handle_args
-    RESULT=$(echo -e "${INPUT// /}" | fzf-tmux "$fzf_opts[@] $args[@]")
+	RESULT=$(echo -e "${INPUT// /}" | fzf-tmux "${fzf_opts[@]}" "${args[@]}")
 }
 
 run_plugin
