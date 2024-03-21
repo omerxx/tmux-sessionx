@@ -7,3 +7,4 @@ if [[ $(echo "$SESSIONS" | wc -l) -gt 1 ]]; then
 else
 	echo "$SESSIONS"
 fi
+
