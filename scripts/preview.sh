@@ -35,7 +35,8 @@ display_session()
 }
 
 window_mode(){
-  tmux capture-pane -ep -t "${1}"
+  args=($1)
+  tmux capture-pane -ep -t "${args[0]}"
 }
 
 # Display a full tree, with selected session highlighted.
