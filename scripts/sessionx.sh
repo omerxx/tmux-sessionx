@@ -39,7 +39,7 @@ handle_binds() {
   bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-w")
   bind_configuration_mode=$(tmux_option_or_fallback "@sessionx-bind-configuration-path" "ctrl-x")
   bind_rename_session=$(tmux_option_or_fallback "@sessionx-bind-rename-session" "ctrl-r")
-	additional_fzf_options=$(tmux_option_or_fallback "@sessionx-fzf-options" "--color pointer:9,spinner:92,marker:46")
+  additional_fzf_options=$(tmux_option_or_fallback "@sessionx-additional-options" "--color pointer:9,spinner:92,marker:46")
 
   bind_back=$(tmux_option_or_fallback "@sessionx-bind-back" "ctrl-b")
   bind_new_window=$(tmux_option_or_fallback "@sessionx-bind-new-window" "ctrl-e")
