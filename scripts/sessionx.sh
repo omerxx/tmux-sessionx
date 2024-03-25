@@ -78,22 +78,19 @@ additional_input() {
 	if [[ -z "$custom_paths" ]]; then
 		echo ""
 	else
-		for i in ${custom_paths//,/ }; do
+		clean_paths=$(echo $custom_paths | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed	-E 's/ /✗/g' )
+		for i in ${clean_paths//,/$IFS}; do
 			if [[ $sessions == *"${i##*/}"* ]]; then
 				continue
 			fi
-			list+=("${i}\n")
-			last=$i
+			echo $i
 		done
-		unset 'list[${#list[@]}-1]'
-		list+=("${last}")
-		echo "${list[@]}"
 	fi
 }
 
 handle_output() {
-	args=($1)
-	target=$(echo "${args[0]}" | tr -d '\n')
+	target=$(echo "$@" | tr -d '\n')
+
 	if [[ -z "$target" ]]; then
 		exit 0
 	fi
@@ -143,7 +140,7 @@ handle_args() {
 	SCROLL_UP="$bind_scroll_up:preview-half-page-up"
 	SCROLL_DOWN="$bind_scroll_down:preview-half-page-down"
 
-	RENAME_SESSION_EXEC='bash -c '\'' printf >&2 "New name: ";read name; tmux rename-session -t {} ${name}; '\'''
+	RENAME_SESSION_EXEC='bash -c '\'' printf >&2 "New name: ";read name; tmux rename-session -t {1} "${name}"; '\'''
 	RENAME_SESSION_RELOAD='bash -c '\'' tmux list-sessions | sed -E "s/:.*$//"; '\'''
 	RENAME_SESSION="$bind_rename_session:execute($RENAME_SESSION_EXEC)+reload($RENAME_SESSION_RELOAD)"
 
@@ -193,7 +190,7 @@ run_plugin() {
 	window_settings
 	handle_binds
 	handle_args
-	RESULT=$(echo -e "${INPUT}" | fzf-tmux "${fzf_opts[@]}" "${args[@]}")
+	RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}")
 }
 
 run_plugin
