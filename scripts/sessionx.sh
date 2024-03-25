@@ -193,7 +193,7 @@ run_plugin() {
 	window_settings
 	handle_binds
 	handle_args
-	RESULT=$(echo -e "${INPUT// /}" | fzf-tmux "${fzf_opts[@]}" "${args[@]}")
+	RESULT=$(echo -e "${INPUT}" | fzf-tmux "${fzf_opts[@]}" "${args[@]}")
 }
 
 run_plugin
