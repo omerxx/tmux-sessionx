@@ -89,7 +89,20 @@ additional_input() {
 }
 
 handle_output() {
-	target=$(echo "$@" | tr -d '\n')
+	if [ -d "$@" ]; then
+		# No special handling because there isn't a window number or window name present
+		# except in unlikely and contrived situations (e.g.
+		# "/home/person/projects:0\ bash" could be a path on your filesystem.)
+		target=$(echo "$@" | tr -d '\n')
+	elif echo "$@" | grep ':' > /dev/null 2>&1 ; then
+		# Colon probably delimits session name and window number
+		session_name=$(echo "$@" | cut -d: -f1)
+		num=$(echo "$@" | cut -d: -f2 | cut -d' ' -f1)
+		target=$(echo "${session_name}:${num}" | tr -d '\n')
+	else
+		# All tokens represent a session name
+		target=$(echo "$@" | tr -d '\n')
+	fi
 
 	if [[ -z "$target" ]]; then
 		exit 0
