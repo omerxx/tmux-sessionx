@@ -90,6 +90,11 @@ set -g @sessionx-additional-options "--color pointer:9,spinner:92,marker:46"
 # If you're running fzf lower than 0.35.0 there are a few missing features
 # Upgrade, or use this setting for support
 set -g @sessionx-legacy-fzf-support 'on'
+
+# With Tmuxinaor turned 'on' (off by default), the plugin will take a given name
+# and look for a tmuxinator project with that name. 
+# If found, it'll launch the template using tmuxinator
+set -g @sessionx-tmuxinator-mode 'off'
 ```
 
 ## Working with SessionX 👷
@@ -106,6 +111,7 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `Ctrl-e` "expand": will expand `PWD` and search for local directories to create additional session from
 - `Ctrl-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
 - `Ctrl-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
+- `Ctrl-/` "tmuxinator": fetches a list of tmuxinator sessions and previews them
 - `?` toggles the preview pane
 
 ### Rebind keys:
@@ -160,7 +166,20 @@ set -g @sessionx-bind-delete-char 'alt-p'
 
 # These commands are bindings to exit sessionx.
 set -g @sessionx-bind-abort 'alt-q'
+
+# This command opens the tmuxinator list.
+set -g @sessionx-bind-tmuxinator-list 'alt-t'
 ```
+
+## Tmuxinator Integration 🚀
+
+If you want sessionx to detect existing tmuxinator projects, you can set `@sessionx-tmuxinator-mode 'on'` in your config. 
+With Tmuxinaor turned 'on' (off by default), the plugin will take a given name and look for a tmuxinator project with that name. If found, it'll **launch the template using tmuxinator**!.
+There's also a binding to list tmuxinator projects, defaulting to `Ctrl-/`, configurable via:
+```bash
+set -g @sessionx-bind-tmuxinator-list 'alt-t'
+```
+
 
 ## WARNING ⚠️
 
