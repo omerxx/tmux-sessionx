@@ -77,22 +77,21 @@ input() {
 additional_input() {
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//')
 	custom_paths=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
-	list=()
 	if [[ -z "$custom_paths" ]]; then
 		echo ""
 	else
-		clean_paths=$(echo $custom_paths | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed	-E 's/ /✗/g' )
+		clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
 		for i in ${clean_paths//,/$IFS}; do
 			if [[ $sessions == *"${i##*/}"* ]]; then
 				continue
 			fi
-			echo $i
+			echo "$i"
 		done
 	fi
 }
 
 handle_output() {
-	if [ -d "$@" ]; then
+	if [ -d "$*" ]; then
 		# No special handling because there isn't a window number or window name present
 		# except in unlikely and contrived situations (e.g.
 		# "/home/person/projects:0\ bash" could be a path on your filesystem.)
