@@ -171,7 +171,7 @@ set -g @sessionx-bind-abort 'alt-q'
 set -g @sessionx-bind-tmuxinator-list 'alt-t'
 ```
 
-## Tmuxinator Integration 🚀
+## [Tmuxinator](https://github.com/tmuxinator/tmuxinator) Integration 🚀
 
 If you want sessionx to detect existing tmuxinator projects, you can set `@sessionx-tmuxinator-mode 'on'` in your config. 
 With Tmuxinaor turned 'on' (off by default), the plugin will take a given name and look for a tmuxinator project with that name. If found, it'll **launch the template using tmuxinator**!.
