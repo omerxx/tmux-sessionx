@@ -3,6 +3,8 @@
 CURRENT="$(tmux display-message -p '#S')"
 Z_MODE="off"
 
+source scripts/tmuxinator.sh
+
 tmux_option_or_fallback() {
 	local option_value
 	option_value="$(tmux show-option -gqv "$1")"
@@ -35,6 +37,7 @@ window_settings() {
 }
 
 handle_binds() {
+	bind_tmuxinator_list=$(tmux_option_or_fallback "@sessionx-bind-tmuxinator-list" "ctrl-/")
 	bind_tree_mode=$(tmux_option_or_fallback "@sessionx-bind-tree-mode" "ctrl-t")
 	bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-w")
 	bind_configuration_mode=$(tmux_option_or_fallback "@sessionx-bind-configuration-path" "ctrl-x")
@@ -74,22 +77,21 @@ input() {
 additional_input() {
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//')
 	custom_paths=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
-	list=()
 	if [[ -z "$custom_paths" ]]; then
 		echo ""
 	else
-		clean_paths=$(echo $custom_paths | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed	-E 's/ /✗/g' )
+		clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
 		for i in ${clean_paths//,/$IFS}; do
 			if [[ $sessions == *"${i##*/}"* ]]; then
 				continue
 			fi
-			echo $i
+			echo "$i"
 		done
 	fi
 }
 
 handle_output() {
-	if [ -d "$@" ]; then
+	if [ -d "$*" ]; then
 		# No special handling because there isn't a window number or window name present
 		# except in unlikely and contrived situations (e.g.
 		# "/home/person/projects:0\ bash" could be a path on your filesystem.)
@@ -109,7 +111,9 @@ handle_output() {
 	fi
 
 	if ! tmux has-session -t="$target" 2>/dev/null; then
-		if test -d "$target"; then
+		if is_known_tmuxinator_template "$target"; then
+			tmuxinator start "$target"
+		elif test -d "$target"; then
 			tmux new-session -ds "${target##*/}" -c "$target"
 			target="${target##*/}"
 		else
@@ -136,6 +140,7 @@ handle_args() {
 	Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
 	CONFIGURATION_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
 
+	TMUXINATOR_MODE="$bind_tmuxinator_list:reload(tmuxinator list | sed '1d')+change-preview(cat ~/.config/tmuxinator/{}.yml)"
 	TREE_MODE="$bind_tree_mode:change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -t {1})"
 	CONFIGURATION_MODE="$bind_configuration_mode:reload(find $CONFIGURATION_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
 	WINDOWS_MODE="$bind_window_mode:reload(tmux list-windows -a -F '#{session_name}:#{window_index}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {1})"
@@ -160,6 +165,7 @@ handle_args() {
 	HEADER="$bind_accept=󰿄  $bind_kill_session=󱂧  $bind_rename_session=󰑕  $bind_configuration_mode=󱃖  $bind_window_mode=   $bind_new_window=󰇘  $bind_back=󰌍  $bind_tree_mode=󰐆   $bind_scroll_up=  $bind_scroll_down= "
 
 	args=(
+		--bind "$TMUXINATOR_MODE"
 		--bind "$TREE_MODE"
 		--bind "$CONFIGURATION_MODE"
 		--bind "$WINDOWS_MODE"
