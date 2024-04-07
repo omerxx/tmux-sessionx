@@ -26,7 +26,6 @@ display_session() {
 	session_name="${1}"
 	session_id=$(tmux ls -F '#{session_id}' -f "#{==:#{session_name},${session_name}}")
 	if test -z "${session_id}"; then
-		echo "Unknown session: ${session_name}"
 		return 1
 	fi
 	tmux capture-pane -ep -t "${session_id}"
