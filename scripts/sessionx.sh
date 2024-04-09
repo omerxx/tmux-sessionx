@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
+source scripts/tmuxinator.sh
 CURRENT="$(tmux display-message -p '#S')"
 Z_MODE="off"
 
-source scripts/tmuxinator.sh
 
 tmux_option_or_fallback() {
 	local option_value
