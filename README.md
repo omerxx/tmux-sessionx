@@ -83,7 +83,7 @@ set -g @sessionx-pointer "▶ "
 set -g @sessionx-zoxide-mode 'on'
 
 # If you want to pass in your own FZF options. This is passed in before all other
-# arguments to FZF to ensure that other options like `sessionx-pointer` and 
+# arguments to FZF to ensure that other options like `sessionx-pointer` and
 # `sessionx-window-height/width` still work. See `man fzf` for config options.
 set -g @sessionx-additional-options "--color pointer:9,spinner:92,marker:46"
 
@@ -92,7 +92,7 @@ set -g @sessionx-additional-options "--color pointer:9,spinner:92,marker:46"
 set -g @sessionx-legacy-fzf-support 'on'
 
 # With Tmuxinaor turned 'on' (off by default), the plugin will take a given name
-# and look for a tmuxinator project with that name. 
+# and look for a tmuxinator project with that name.
 # If found, it'll launch the template using tmuxinator
 set -g @sessionx-tmuxinator-mode 'off'
 ```
@@ -175,9 +175,10 @@ set -g @sessionx-bind-tmuxinator-list 'alt-t'
 
 ## [Tmuxinator](https://github.com/tmuxinator/tmuxinator) Integration 🚀
 
-If you want sessionx to detect existing tmuxinator projects, you can set a `sessionx-tmuxinator-mode` in your config (see snippet below). 
+If you want sessionx to detect existing tmuxinator projects, you can set a `sessionx-tmuxinator-mode` in your config (see snippet below).
 With Tmuxinaor turned 'on' (off by default), the plugin will take a given name and look for a tmuxinator project with that name. If found, it'll **launch the template using tmuxinator**!.
 There's also a binding to list tmuxinator projects, defaulting to `Ctrl-/`, configurable via:
+
 ```bash
 # Tmuxinator mode on
 set -g @sessionx-tmuxinator-mode 'on'
@@ -185,7 +186,6 @@ set -g @sessionx-tmuxinator-mode 'on'
 # Changing the binding from the default Ctrl-/
 set -g @sessionx-bind-tmuxinator-list 'alt-t'
 ```
-
 
 ## WARNING ⚠️
 
