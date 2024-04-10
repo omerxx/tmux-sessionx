@@ -52,11 +52,11 @@ handle_binds() {
 	bind_accept=$(tmux_option_or_fallback "@sessionx-bind-accept" "enter")
 	bind_delete_char=$(tmux_option_or_fallback "@sessionx-bind-delete-char" "bspace")
 
-	bind_scroll_up=$(tmux_option_or_fallback "@sessionx-bind-scroll-up" "ctrl-p")
+	bind_scroll_up=$(tmux_option_or_fallback "@sessionx-bind-scroll-up" "ctrl-u")
 	bind_scroll_down=$(tmux_option_or_fallback "@sessionx-bind-scroll-down" "ctrl-d")
 
 	bind_select_up=$(tmux_option_or_fallback "@sessionx-bind-select-up" "ctrl-n")
-	bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-m")
+	bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-p")
 
 }
 
@@ -96,7 +96,7 @@ handle_output() {
 		# except in unlikely and contrived situations (e.g.
 		# "/home/person/projects:0\ bash" could be a path on your filesystem.)
 		target=$(echo "$@" | tr -d '\n')
-	elif echo "$@" | grep ':' > /dev/null 2>&1 ; then
+	elif echo "$@" | grep ':' >/dev/null 2>&1; then
 		# Colon probably delimits session name and window number
 		session_name=$(echo "$@" | cut -d: -f1)
 		num=$(echo "$@" | cut -d: -f2 | cut -d' ' -f1)
