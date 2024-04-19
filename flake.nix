@@ -30,14 +30,9 @@
         # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
         packages.default = pkgs.tmuxPlugins.mkTmuxPlugin {
           pluginName = "sessionx";
-          version = "20240119";
+          version = "dev";
 
-          src = pkgs.fetchFromGitHub {
-            owner = "omerxx";
-            repo = "tmux-sessionx";
-            rev = "52b837b09f84bc39c84c018f049f801b44b5ed40";
-            hash = "sha256-7JglXguOnCrt6OwnlPQ6xaNAvOhGFIFtgRRF+MD55Cs=";
-          };
+          src = ./.;
           nativeBuildInputs = [ pkgs.makeWrapper ];
 
           postPatch = ''
