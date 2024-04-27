@@ -91,7 +91,7 @@ set -g @sessionx-additional-options "--color pointer:9,spinner:92,marker:46"
 # Upgrade, or use this setting for support
 set -g @sessionx-legacy-fzf-support 'on'
 
-# With Tmuxinaor turned 'on' (off by default), the plugin will take a given name
+# With Tmuxinator turned 'on' (off by default), the plugin will take a given name
 # and look for a tmuxinator project with that name.
 # If found, it'll launch the template using tmuxinator
 set -g @sessionx-tmuxinator-mode 'off'
