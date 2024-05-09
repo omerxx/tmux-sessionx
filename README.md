@@ -128,6 +128,10 @@ If you want to change the default key bindings, you can do using this configurat
 # This command is equivalent to the 'Enter' key.
 set -g @sessionx-bind-accept 'alt-j'
 
+# Changing this will interactively accept a session 
+# when there's only one match
+set -g @sessionx-auto-accept 'off'
+
 # This command opens the current window list.
 # By default, it is set to `ctrl-w`.
 set -g @sessionx-bind-window-mode 'alt-s'
