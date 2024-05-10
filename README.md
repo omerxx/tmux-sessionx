@@ -33,7 +33,7 @@ set -g @sessionx-bind '<mykey>'
 ### Additional configuration options:
 
 ```bash
-# `C-x` is a customizeable, by default it indexes directories in `$HOME/.config`,
+# `C-x` is customizeable, by default it indexes directories in `$HOME/.config`,
 # but this can be changed by adding the config below.
 # e.g. set -g @sessionx-x-path '~/dotfiles'
 set -g @sessionx-x-path '<some-path>'
@@ -130,6 +130,9 @@ set -g @sessionx-bind-accept 'alt-j'
 
 # Changing this will interactively accept a session 
 # when there's only one match
+# NOTE! auto-accept will many times prevent from
+# creating new sessions.
+# It is best combined with `@sessionx-custom-paths`
 set -g @sessionx-auto-accept 'off'
 
 # This command opens the current window list.
