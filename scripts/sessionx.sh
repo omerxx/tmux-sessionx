@@ -82,7 +82,7 @@ additional_input() {
 	else
 		clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
 		for i in ${clean_paths//,/$IFS}; do
-			if [[ $sessions == *"${i##*/}"* ]]; then
+            if [[ $sessions == $(basename $i) ]]; then
 				continue
 			fi
 			echo "$i"
