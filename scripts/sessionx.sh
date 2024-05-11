@@ -187,7 +187,7 @@ handle_args() {
 		--preview="${PREVIEW_LINE}"
 		--preview-window="${preview_location},${preview_ratio},,"
 		--layout="$layout_mode"
-		--pointer=$pointer_icon
+		--pointer="$pointer_icon"
 		-p "$window_width,$window_height"
 		--prompt "$prompt_icon"
 		--print-query
@@ -200,6 +200,10 @@ handle_args() {
 		args+=(--border-label "Current session: \"$CURRENT\" ")
 		args+=(--bind 'focus:transform-preview-label:echo [ {} ]')
 	fi
+	auto_accept=$(tmux_option_or_fallback "@sessionx-auto-accept" "off")
+	if [[ "${auto_accept}" == "on" ]]; then
+		args+=(--bind one:accept)
+	fi
 
 	eval "fzf_opts=($additional_fzf_options)"
 }
@@ -209,7 +213,7 @@ run_plugin() {
 	window_settings
 	handle_binds
 	handle_args
-	RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}")
+	RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 }
 
 run_plugin
