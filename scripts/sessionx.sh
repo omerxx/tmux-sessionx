@@ -77,12 +77,18 @@ input() {
 additional_input() {
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//')
 	custom_paths=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
+	custom_path_subdirectories=$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")
 	if [[ -z "$custom_paths" ]]; then
 		echo ""
 	else
 		clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
-		for i in ${clean_paths//,/$IFS}; do
-            if grep -q $(basename $i) <<< $sessions; then
+		if [[ "$custom_path_subdirectories" == "true" ]]; then
+			paths=$(find ${clean_paths//,/ } -mindepth 1 -maxdepth 1 -type d)
+		else
+			paths=${clean_paths//,/ }
+		fi
+		for i in ${paths//,/$IFS}; do
+			if grep -q $(basename $i) <<< $sessions; then
 				continue
 			fi
 			echo "$i"
