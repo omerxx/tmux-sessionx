@@ -82,7 +82,7 @@ additional_input() {
 	else
 		clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
 		for i in ${clean_paths//,/$IFS}; do
-            if [[ $sessions == $(basename $i) ]]; then
+            if grep -q $(basename $i) <<< $sessions; then
 				continue
 			fi
 			echo "$i"
@@ -114,8 +114,8 @@ handle_output() {
 		if is_known_tmuxinator_template "$target"; then
 			tmuxinator start "$target"
 		elif test -d "$target"; then
-			tmux new-session -ds "${target##*/}" -c "$target"
-			target="${target##*/}"
+            tmux new-session -ds $(basename $target) -c "$target"
+			target="$(basename $target)"
 		else
 			if [[ "$Z_MODE" == "on" ]]; then
 				z_target=$(zoxide query "$target")
