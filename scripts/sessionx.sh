@@ -87,12 +87,14 @@ additional_input() {
 		else
 			paths=${clean_paths//,/ }
 		fi
-		for i in ${paths//,/$IFS}; do
-			if grep -q $(basename $i) <<< $sessions; then
-				continue
+		add_path() {
+			local path=$1
+			if ! grep -q "$(basename "$path")" <<< "$sessions"; then
+				echo "$path"
 			fi
-			echo "$i"
-		done
+		}
+		export -f add_path
+		printf "%s\n" "${paths//,/$IFS}" | xargs -n 1 -P 0 bash -c 'add_path "$@"' _
 	fi
 }
 
