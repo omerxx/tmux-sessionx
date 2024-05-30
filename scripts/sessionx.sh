@@ -5,6 +5,12 @@ Z_MODE="off"
 
 source scripts/tmuxinator.sh
 
+get_sorted_sessions() {
+	last_session=$(tmux display-message -p '#{client_last_session}')
+	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -v "^$last_session$" )
+	echo -e "$sessions\n$last_session" | awk '!seen[$0]++'
+}
+
 tmux_option_or_fallback() {
 	local option_value
 	option_value="$(tmux show-option -gqv "$1")"
@@ -67,15 +73,15 @@ input() {
 	else
 		filter_current_session=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
 		if [[ "$filter_current_session" == "true" ]]; then
-			(tmux list-sessions | sed -E 's/:.*$//' | grep -v "$CURRENT$") || echo "$CURRENT"
+			(get_sorted_sessions | grep -v "$CURRENT$") || echo "$CURRENT"
 		else
-			(tmux list-sessions | sed -E 's/:.*$//') || echo "$CURRENT"
+			(get_sorted_sessions) || echo "$CURRENT"
 		fi
 	fi
 }
 
 additional_input() {
-	sessions=$(tmux list-sessions | sed -E 's/:.*$//')
+	sessions=$(get_sorted_sessions)
 	custom_paths=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
 	custom_path_subdirectories=$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")
 	if [[ -z "$custom_paths" ]]; then
@@ -155,7 +161,7 @@ handle_args() {
 
 	NEW_WINDOW="$bind_new_window:reload(find $PWD -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
 	BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
-	KILL_SESSION="$bind_kill_session:execute-silent(tmux kill-session -t {})+reload(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/reload_sessions.sh)"
+	KILL_SESSION="$bind_kill_session:execute-silent(tmux kill-session -t {})+reload(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/sessionx.sh)"
 
 	ACCEPT="$bind_accept:replace-query+print-query"
 	DELETE="$bind_delete_char:backward-delete-char"
