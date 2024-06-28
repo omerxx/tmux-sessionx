@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
 CURRENT_SESSION=$(tmux display-message -p '#S')
-SESSIONS=$(tmux list-sessions | sed -E 's/:.*$//')
 
-if [[ $(echo "$SESSIONS" | wc -l) -gt 1 ]]; then
-	echo "$SESSIONS" | grep -v "$CURRENT_SESSION"
+filter_current_session=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
+if [[ "$filter_current_session" == "true" ]]; then
+	(tmux list-sessions | sed -E 's/:.*$//' | grep -v "$CURRENT_SESSION$") || echo "$CURRENT_SESSION"
 else
-	echo "$SESSIONS"
+	(tmux list-sessions | sed -E 's/:.*$//') || echo "$CURRENT_SESSION"
 fi
-
