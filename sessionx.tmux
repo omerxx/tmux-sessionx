@@ -9,4 +9,4 @@ tmux_option_or_fallback() {
 	fi
 	echo "$option_value"
 }
-tmux bind-key "$(tmux_option_or_fallback "@sessionx-bind" "O")" run-shell "$CURRENT_DIR/scripts/sessionx.sh"
+tmux bind-key $(tmux_option_or_fallback "@sessionx-bind" "O") run-shell "$CURRENT_DIR/scripts/sessionx.sh"
