@@ -25,6 +25,14 @@ You can change it by adding this line with your desired key:
 # I recommend using `o` if not already in use, for least key strokes when launching
 set -g @sessionx-bind '<mykey>'
 ```
+### Root Binding
+If you want to open sessionx without the prefix (e.g. `Alt-o`),
+you can do so by including `-n` in `@sessionx-bind`:
+```bash
+# M- gets interpreted as "hold Alt" here
+set -g @sessionx-bind '-n M-o'
+```
+
 ### Additional configuration options:
 ```bash
 # `C-x` is a customizeable, by default it indexes directories in `$HOME/.config`,
