@@ -54,7 +54,7 @@ tree_mode() {
 		# Display each window
 		tmux lsw -t"$s" -F'#{window_id}' | while read -r w; do
 			W=$(tmux lsw -t"$s" -F'#{window_id}#{T:tree_mode_format}' | grep ^"$w")
-			echo "  ﬌ ${W##$w}"
+			echo "  󰘍 ${W##$w}"
 		done
 	done
 }
