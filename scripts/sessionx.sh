@@ -166,8 +166,7 @@ handle_args() {
 	CONFIGURATION_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
 
 	TMUXINATOR_MODE="$bind_tmuxinator_list:reload(tmuxinator list --newline | sed '1d')+change-preview(cat ~/.config/tmuxinator/{}.yml 2>/dev/null)"
-	FZF_MARKS_FILE=$(tmux_option_or_fallback "@sessionx-fzf-marks-file" "$HOME/.fzf-marks")
-	FZF_MARKS_FILE=$(echo $FZF_MARKS_FILE | sed "s|~|$HOME|")
+	FZF_MARKS_FILE=$(tmux_option_or_fallback "@sessionx-fzf-marks-file" "$HOME/.fzf-marks" | sed "s|~|$HOME|")
 	if [[ -e "$FZF_MARKS_FILE" ]]; then
 		FZF_MARKS_MODE=$(tmux_option_or_fallback "@sessionx-fzf-marks-mode" "off")
 	fi
