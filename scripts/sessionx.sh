@@ -172,7 +172,7 @@ handle_args() {
 		FZF_MARKS_MODE=$(tmux_option_or_fallback "@sessionx-fzf-marks-mode" "off")
 	fi
 	if [[ "$FZF_MARKS_MODE" == "on" ]]; then
-		FZF_MARKS_WINDOW="$bind_fzf_marks:reload(cat $FZF_MARKS_FILE)+change-preview(sed 's/.*: \(.*\)$/\1/' <<< {} | ls)"
+		FZF_MARKS_WINDOW="$bind_fzf_marks:reload(cat $FZF_MARKS_FILE)+change-preview(sed 's/.*: \(.*\)$/\1/' <<< {} | xargs ls)"
 	fi
 	TREE_MODE="$bind_tree_mode:change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -t {1})"
 	CONFIGURATION_MODE="$bind_configuration_mode:reload(find $CONFIGURATION_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
