@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CURRENT="$(tmux display-message -p '#S')"
 Z_MODE="off"
 
-source scripts/tmuxinator.sh
+source "$CURRENT_DIR/tmuxinator.sh"
 
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
@@ -43,7 +44,6 @@ window_settings() {
 }
 
 handle_binds() {
-	bind_tmuxinator_list=$(tmux_option_or_fallback "@sessionx-bind-tmuxinator-list" "ctrl-/")
 	bind_tree_mode=$(tmux_option_or_fallback "@sessionx-bind-tree-mode" "ctrl-t")
 	bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-w")
 	bind_configuration_mode=$(tmux_option_or_fallback "@sessionx-bind-configuration-path" "ctrl-x")
@@ -126,7 +126,7 @@ handle_output() {
 	fi
 
 	if ! tmux has-session -t="$target" 2>/dev/null; then
-		if is_known_tmuxinator_template "$target"; then
+		if is_tmuxinator_enabled && is_tmuxinator_template "$target"; then
 			tmuxinator start "$target"
 		elif test -d "$target"; then
 			d_target="$(basename "$target" | tr -d '.')"
@@ -221,6 +221,10 @@ handle_args() {
 	auto_accept=$(tmux_option_or_fallback "@sessionx-auto-accept" "off")
 	if [[ "${auto_accept}" == "on" ]]; then
 		args+=(--bind one:accept)
+	fi
+
+	if $(is_tmuxinator_enabled); then
+		args+=(--bind "$(load_tmuxinator_binding)")
 	fi
 
 	eval "fzf_opts=($additional_fzf_options)"
