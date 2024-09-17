@@ -9,6 +9,11 @@ source "$CURRENT_DIR/tmuxinator.sh"
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -v "^$last_session$")
+	filtered_sessios=$(tmux_option_or_fallback "@sessionx-filtered-sessions" "")
+	if [[ -n "$filtered_sessios" ]]; then
+	  filtered_and_piped=$(echo "$filtered_sessios" | sed -E 's/,/|/g')
+	  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
+	fi
 	echo -e "$sessions\n$last_session" | awk '!seen[$0]++'
 }
 
