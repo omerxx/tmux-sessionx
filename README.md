@@ -91,6 +91,11 @@ set -g @sessionx-prompt " "
 # If you want to change the pointer
 set -g @sessionx-pointer "▶ "
 
+# Customize `ls` command to display your directories nicely (default: `ls`)
+# Can be used with `exa`, `lsd`, or other command of your choice to
+# set preview window to match your preference
+set -g @sessionx-ls-command 'lsd --tree --color=always --icon=always'
+
 # When set to 'on' a non-result will be sent to zoxide for path matching
 # Requires zoxide installed
 set -g @sessionx-zoxide-mode 'on'
