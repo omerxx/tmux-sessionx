@@ -109,6 +109,9 @@ set -g @sessionx-legacy-fzf-support 'on'
 # If found, it'll launch the template using tmuxinator
 set -g @sessionx-tmuxinator-mode 'off'
 
+# Turn on fzf-marks (default: off) mode to launch a new session from your marks
+set -g @sessionx-fzf-marks-mode 'off'
+
 # If you want to filter sessions, use a comma separated list of session names
 # e.g. set -g @sessionx-filtered-sessions 'scratch,somesession'
 # This will filter out sessions that contain 'scratch' (used by tmux-floax)
@@ -133,6 +136,7 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `Ctrl-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
 - `Ctrl-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
 - `Ctrl-/` "tmuxinator": fetches a list of tmuxinator sessions and previews them
+- `Ctrl-g` "fzf-marks": show fzf-marks marks
 - `?` toggles the preview pane
 
 ### Rebind keys:
@@ -197,6 +201,9 @@ set -g @sessionx-bind-abort 'alt-q'
 
 # This command opens the tmuxinator list.
 set -g @sessionx-bind-tmuxinator-list 'alt-t'
+
+# This command open fzf-marks marks.
+set -g @sessionx-bind-fzf-marks 'alt-g'
 ```
 
 ## [Tmuxinator](https://github.com/tmuxinator/tmuxinator) Integration 🚀
@@ -211,6 +218,24 @@ set -g @sessionx-tmuxinator-mode 'on'
 
 # Changing the binding from the default Ctrl-/
 set -g @sessionx-bind-tmuxinator-list 'alt-t'
+```
+
+## [fzf-marks](https://github.com/urbainvaes/fzf-marks) Integration 🎯
+
+You can turn on fzf-marks mode with `sessionx-fzf-marks-mode` to quickly jump to your marks in a new session.
+Sessionx will look for marks file in a default location first (`~/.fzf-marks`). **Important**: If the fzf-marks file does not exist,
+fzf-marks mode will not turn on. Currently, you have to manually specify the marks file with `sessionx-fzf-marks-file`
+if you change it to other location (see snippet below).
+
+```bash
+# fzf-marks integration 'on' (default: off)
+set -g @sessionx-fzf-marks-mode 'on'
+
+# Change fzf-marks file to a custom location
+set -g @sessionx-fzf-marks-file '~/.config/fzf-marks'
+
+# Rebind from the default key Ctrl-g
+set -g @sessionx-bind-fzf-marks 'alt-g'
 ```
 
 ## WARNING ⚠️
