@@ -33,6 +33,12 @@ set -g @sessionx-bind '<mykey>'
 ### Additional configuration options:
 
 ```bash
+# By default, tmux `<prefix>` key needs to pressed before `<mykey>` to launch
+# sessionx. In case you just want to bind '<mykey>' without the tmux '<prefix>'
+# add the following line to turn the prefix off. This option is set to
+# on by defaut.
+set -g @sessionx-prefix off
+
 # `C-x` is customizeable, by default it indexes directories in `$HOME/.config`,
 # but this can be changed by adding the config below.
 # e.g. set -g @sessionx-x-path '~/dotfiles'
