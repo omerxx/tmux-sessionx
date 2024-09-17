@@ -3,9 +3,9 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CURRENT="$(tmux display-message -p '#S')"
 Z_MODE="off"
-FZF_MARKS_MODE="off"
 
 source "$CURRENT_DIR/tmuxinator.sh"
+source "$CURRENT_DIR/fzf-marks.sh"
 
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
@@ -50,7 +50,6 @@ window_settings() {
 }
 
 handle_binds() {
-	bind_fzf_marks=$(tmux_option_or_fallback "@sessionx-bind-fzf-marks" "ctrl-g")
 	bind_tree_mode=$(tmux_option_or_fallback "@sessionx-bind-tree-mode" "ctrl-t")
 	bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-w")
 	bind_configuration_mode=$(tmux_option_or_fallback "@sessionx-bind-configuration-path" "ctrl-x")
@@ -118,10 +117,10 @@ handle_output() {
 		# except in unlikely and contrived situations (e.g.
 		# "/home/person/projects:0\ bash" could be a path on your filesystem.)
 		target=$(echo "$@" | tr -d '\n')
-	elif echo "$@" | grep ' : ' >/dev/null 2>&1;then
-		# handle fzf-marks format => mark_name : path/to/dir
-		mark=$(echo "$@" | cut -d: -f1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
-		target=$(echo "$@" | cut -d: -f2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
+	elif is_fzf-marks_mark "$@" ; then
+		# Needs to run before session name mode
+		mark=$(get_fzf-marks_mark "$@")
+		target=$(get_fzf-marks_target "$@")
 	elif echo "$@" | grep ':' >/dev/null 2>&1; then
 		# Colon probably delimits session name and window number
 		session_name=$(echo "$@" | cut -d: -f1)
@@ -171,13 +170,6 @@ handle_args() {
 	CONFIGURATION_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
 	FZF_BUILTIN_TMUX=$(tmux_option_or_fallback "@sessionx-fzf-builtin-tmux" "off")
 
-	FZF_MARKS_FILE=$(tmux_option_or_fallback "@sessionx-fzf-marks-file" "$HOME/.fzf-marks" | sed "s|~|$HOME|")
-	if [[ -e "$FZF_MARKS_FILE" ]]; then
-		FZF_MARKS_MODE=$(tmux_option_or_fallback "@sessionx-fzf-marks-mode" "off")
-	fi
-	if [[ "$FZF_MARKS_MODE" == "on" ]]; then
-		FZF_MARKS_WINDOW="$bind_fzf_marks:reload(cat $FZF_MARKS_FILE)+change-preview(sed 's/.*: \(.*\)$/\1/' <<< {} | xargs ls)"
-	fi
 	TREE_MODE="$bind_tree_mode:change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -t {1})"
 	CONFIGURATION_MODE="$bind_configuration_mode:reload(find $CONFIGURATION_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
 	WINDOWS_MODE="$bind_window_mode:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -w {1})"
@@ -201,8 +193,8 @@ handle_args() {
 	RENAME_SESSION="$bind_rename_session:execute($RENAME_SESSION_EXEC)+reload($RENAME_SESSION_RELOAD)"
 
 	HEADER="$bind_accept=󰿄  $bind_kill_session=󱂧  $bind_rename_session=󰑕  $bind_configuration_mode=󱃖  $bind_window_mode=   $bind_new_window=󰇘  $bind_back=󰌍  $bind_tree_mode=󰐆   $bind_scroll_up=  $bind_scroll_down= / $bind_zo="
-	if [[ "$FZF_MARKS_MODE" == "on" ]]; then
-		HEADER="$HEADER  $bind_fzf_marks=󰣉"
+	if is_fzf-marks_enabled; then
+		HEADER="$HEADER  $(get_fzf-marks_keybind)=󰣉"
 	fi
 
 	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
@@ -241,9 +233,6 @@ handle_args() {
 		--tac
 		--scrollbar '▌▐'
 	)
-	if  [[ "$FZF_MARKS_MODE" == "on" ]]; then
-		args+=(--bind "$FZF_MARKS_WINDOW")
-	fi
 
 	legacy=$(tmux_option_or_fallback "@sessionx-legacy-fzf-support" "off")
 	if [[ "${legacy}" == "off" ]]; then
@@ -257,6 +246,9 @@ handle_args() {
 
 	if $(is_tmuxinator_enabled); then
 		args+=(--bind "$(load_tmuxinator_binding)")
+	fi
+	if $(is_fzf-marks_enabled); then
+		args+=(--bind "$(load_fzf-marks_binding)")
 	fi
 
 	eval "fzf_opts=($additional_fzf_options)"
