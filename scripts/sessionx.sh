@@ -5,6 +5,7 @@ CURRENT="$(tmux display-message -p '#S')"
 Z_MODE="off"
 
 source "$CURRENT_DIR/tmuxinator.sh"
+source "$CURRENT_DIR/fzf-marks.sh"
 
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
@@ -116,6 +117,10 @@ handle_output() {
 		# except in unlikely and contrived situations (e.g.
 		# "/home/person/projects:0\ bash" could be a path on your filesystem.)
 		target=$(echo "$@" | tr -d '\n')
+	elif is_fzf-marks_mark "$@" ; then
+		# Needs to run before session name mode
+		mark=$(get_fzf-marks_mark "$@")
+		target=$(get_fzf-marks_target "$@")
 	elif echo "$@" | grep ':' >/dev/null 2>&1; then
 		# Colon probably delimits session name and window number
 		session_name=$(echo "$@" | cut -d: -f1)
@@ -133,6 +138,9 @@ handle_output() {
 	if ! tmux has-session -t="$target" 2>/dev/null; then
 		if is_tmuxinator_enabled && is_tmuxinator_template "$target"; then
 			tmuxinator start "$target"
+		elif test -n "$mark"; then
+			tmux new-session -ds "$mark" -c "$target"
+			target="$mark"
 		elif test -d "$target"; then
 			d_target="$(basename "$target" | tr -d '.')"
 			tmux new-session -ds $d_target -c "$target"
@@ -185,6 +193,9 @@ handle_args() {
 	RENAME_SESSION="$bind_rename_session:execute($RENAME_SESSION_EXEC)+reload($RENAME_SESSION_RELOAD)"
 
 	HEADER="$bind_accept=󰿄  $bind_kill_session=󱂧  $bind_rename_session=󰑕  $bind_configuration_mode=󱃖  $bind_window_mode=   $bind_new_window=󰇘  $bind_back=󰌍  $bind_tree_mode=󰐆   $bind_scroll_up=  $bind_scroll_down= / $bind_zo="
+	if is_fzf-marks_enabled; then
+		HEADER="$HEADER  $(get_fzf-marks_keybind)=󰣉"
+	fi
 
 	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
 		fzf_size_arg="--tmux"
@@ -235,6 +246,9 @@ handle_args() {
 
 	if $(is_tmuxinator_enabled); then
 		args+=(--bind "$(load_tmuxinator_binding)")
+	fi
+	if $(is_fzf-marks_enabled); then
+		args+=(--bind "$(load_fzf-marks_binding)")
 	fi
 
 	eval "fzf_opts=($additional_fzf_options)"
