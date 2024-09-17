@@ -33,6 +33,12 @@ set -g @sessionx-bind '<mykey>'
 ### Additional configuration options:
 
 ```bash
+# By default, tmux `<prefix>` key needs to pressed before `<mykey>` to launch
+# sessionx. In case you just want to bind '<mykey>' without the tmux '<prefix>'
+# add the following line to turn the prefix off. This option is set to
+# on by defaut.
+set -g @sessionx-prefix off
+
 # `C-x` is customizeable, by default it indexes directories in `$HOME/.config`,
 # but this can be changed by adding the config below.
 # e.g. set -g @sessionx-x-path '~/dotfiles'
@@ -46,6 +52,9 @@ set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
 # A boolean flag, if set to true, will also display subdirectories
 # under the aforementioned custom paths, e.g. /Users/me/projects/tmux-sessionx
 set -g @sessionx-custom-paths-subdirectories 'false'
+
+# Uses `fzf --tmux` instead of the `fzf-tmux` script (requires fzf >= 0.53).
+set -g @sessionx-fzf-builtin-tmux 'on'
 
 # By default, the current session will not be shown on first view
 # This is to support quick switch of sessions
@@ -99,6 +108,12 @@ set -g @sessionx-legacy-fzf-support 'on'
 # and look for a tmuxinator project with that name.
 # If found, it'll launch the template using tmuxinator
 set -g @sessionx-tmuxinator-mode 'off'
+
+# If you want to filter sessions, use a comma separated list of session names
+# e.g. set -g @sessionx-filtered-sessions 'scratch,somesession'
+# This will filter out sessions that contain 'scratch' (used by tmux-floax)
+# and 'somesession'
+set -g @sessionx-filtered-sessions 'scratch,somesession'
 ```
 
 ## Working with SessionX 👷
@@ -132,7 +147,7 @@ If you want to change the default key bindings, you can do using this configurat
 # This command is equivalent to the 'Enter' key.
 set -g @sessionx-bind-accept 'alt-j'
 
-# Changing this will interactively accept a session 
+# Changing this will interactively accept a session
 # when there's only one match
 # NOTE! auto-accept will many times prevent from
 # creating new sessions.

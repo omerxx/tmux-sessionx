@@ -21,6 +21,15 @@ single_mode() {
 	display_session "${session_name}"
 }
 
+tmux_option_or_fallback() {
+	local option_value
+	option_value="$(tmux show-option -gqv "$1")"
+	if [ -z "$option_value" ]; then
+		option_value="$2"
+	fi
+	echo "$option_value"
+}
+
 # Display a single sesssion
 display_session() {
 	session_name="${1}"
@@ -42,6 +51,7 @@ window_mode() {
 # This is the original tmux_tree script (see kudos).
 tree_mode() {
 	highlight="${1}"
+	icon=$(tmux_option_or_fallback "@sessionx-tree-icon" "󰘍")
 	tmux ls -F'#{session_id}' | while read -r s; do
 		S=$(tmux ls -F'#{session_id}#{session_name}: #{T:tree_mode_format}' | grep ^"$s")
 		session_info=${S##$s}
@@ -54,7 +64,7 @@ tree_mode() {
 		# Display each window
 		tmux lsw -t"$s" -F'#{window_id}' | while read -r w; do
 			W=$(tmux lsw -t"$s" -F'#{window_id}#{T:tree_mode_format}' | grep ^"$w")
-			echo "  ﬌ ${W##$w}"
+			echo "  $icon ${W##$w}"
 		done
 	done
 }
