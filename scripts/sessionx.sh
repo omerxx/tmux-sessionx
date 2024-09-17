@@ -155,6 +155,7 @@ handle_args() {
 	fi
 	Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
 	CONFIGURATION_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
+  FZF_BUILTIN_TMUX=$(tmux_option_or_fallback "@sessionx-fzf-builtin-tmux" "off")
 
 	TREE_MODE="$bind_tree_mode:change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh -t {1})"
 	CONFIGURATION_MODE="$bind_configuration_mode:reload(find $CONFIGURATION_PATH -mindepth 1 -maxdepth 1 -type d)+change-preview(ls {})"
@@ -180,6 +181,12 @@ handle_args() {
 
 	HEADER="$bind_accept=󰿄  $bind_kill_session=󱂧  $bind_rename_session=󰑕  $bind_configuration_mode=󱃖  $bind_window_mode=   $bind_new_window=󰇘  $bind_back=󰌍  $bind_tree_mode=󰐆   $bind_scroll_up=  $bind_scroll_down= / $bind_zo="
 
+  if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
+    fzf_size_arg="--tmux"
+  else
+    fzf_size_arg="-p"
+  fi
+
 	args=(
 		--bind "$TREE_MODE"
 		--bind "$CONFIGURATION_MODE"
@@ -204,7 +211,7 @@ handle_args() {
 		--preview-window="${preview_location},${preview_ratio},,"
 		--layout="$layout_mode"
 		--pointer="$pointer_icon"
-		-p "$window_width,$window_height"
+		"${fzf_size_arg}" "$window_width,$window_height"
 		--prompt "$prompt_icon"
 		--print-query
 		--tac
@@ -233,7 +240,12 @@ run_plugin() {
 	window_settings
 	handle_binds
 	handle_args
-	RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+
+  if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
+    RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+  else
+    RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+  fi
 }
 
 run_plugin
