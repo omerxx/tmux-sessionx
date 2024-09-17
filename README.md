@@ -108,6 +108,12 @@ set -g @sessionx-legacy-fzf-support 'on'
 # and look for a tmuxinator project with that name.
 # If found, it'll launch the template using tmuxinator
 set -g @sessionx-tmuxinator-mode 'off'
+
+# If you want to filter sessions, use a comma separated list of session names
+# e.g. set -g @sessionx-filtered-sessions 'scratch,somesession'
+# This will filter out sessions that contain 'scratch' (used by tmux-floax)
+# and 'somesession'
+set -g @sessionx-filtered-sessions 'scratch,somesession'
 ```
 
 ## Working with SessionX 👷
