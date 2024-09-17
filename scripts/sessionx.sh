@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CURRENT="$(tmux display-message -p '#S')"
 Z_MODE="off"
 FZF_MARKS_MODE="off"
 
-source scripts/tmuxinator.sh
+source "$CURRENT_DIR/tmuxinator.sh"
 
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -v "^$last_session$")
+	filtered_sessios=$(tmux_option_or_fallback "@sessionx-filtered-sessions" "")
+	if [[ -n "$filtered_sessios" ]]; then
+	  filtered_and_piped=$(echo "$filtered_sessios" | sed -E 's/,/|/g')
+	  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
+	fi
 	echo -e "$sessions\n$last_session" | awk '!seen[$0]++'
 }
 
@@ -44,7 +50,6 @@ window_settings() {
 }
 
 handle_binds() {
-	bind_tmuxinator_list=$(tmux_option_or_fallback "@sessionx-bind-tmuxinator-list" "ctrl-/")
 	bind_fzf_marks=$(tmux_option_or_fallback "@sessionx-bind-fzf-marks" "ctrl-g")
 	bind_tree_mode=$(tmux_option_or_fallback "@sessionx-bind-tree-mode" "ctrl-t")
 	bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-w")
@@ -132,7 +137,7 @@ handle_output() {
 	fi
 
 	if ! tmux has-session -t="$target" 2>/dev/null; then
-		if is_known_tmuxinator_template "$target"; then
+		if is_tmuxinator_enabled && is_tmuxinator_template "$target"; then
 			tmuxinator start "$target"
 		elif test -n "$mark"; then
 			tmux new-session -ds "$mark" -c "$target"
@@ -164,8 +169,8 @@ handle_args() {
 	fi
 	Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
 	CONFIGURATION_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
+	FZF_BUILTIN_TMUX=$(tmux_option_or_fallback "@sessionx-fzf-builtin-tmux" "off")
 
-	TMUXINATOR_MODE="$bind_tmuxinator_list:reload(tmuxinator list --newline | sed '1d')+change-preview(cat ~/.config/tmuxinator/{}.yml 2>/dev/null)"
 	FZF_MARKS_FILE=$(tmux_option_or_fallback "@sessionx-fzf-marks-file" "$HOME/.fzf-marks" | sed "s|~|$HOME|")
 	if [[ -e "$FZF_MARKS_FILE" ]]; then
 		FZF_MARKS_MODE=$(tmux_option_or_fallback "@sessionx-fzf-marks-mode" "off")
@@ -200,8 +205,13 @@ handle_args() {
 		HEADER="$HEADER  $bind_fzf_marks=󰣉"
 	fi
 
+	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
+		fzf_size_arg="--tmux"
+	else
+		fzf_size_arg="-p"
+	fi
+
 	args=(
-		--bind "$TMUXINATOR_MODE"
 		--bind "$TREE_MODE"
 		--bind "$CONFIGURATION_MODE"
 		--bind "$WINDOWS_MODE"
@@ -225,7 +235,7 @@ handle_args() {
 		--preview-window="${preview_location},${preview_ratio},,"
 		--layout="$layout_mode"
 		--pointer="$pointer_icon"
-		-p "$window_width,$window_height"
+		"${fzf_size_arg}" "$window_width,$window_height"
 		--prompt "$prompt_icon"
 		--print-query
 		--tac
@@ -245,6 +255,10 @@ handle_args() {
 		args+=(--bind one:accept)
 	fi
 
+	if $(is_tmuxinator_enabled); then
+		args+=(--bind "$(load_tmuxinator_binding)")
+	fi
+
 	eval "fzf_opts=($additional_fzf_options)"
 }
 
@@ -253,7 +267,12 @@ run_plugin() {
 	window_settings
 	handle_binds
 	handle_args
-	RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+
+	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
+		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+	else
+		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+	fi
 }
 
 run_plugin
