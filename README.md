@@ -256,3 +256,11 @@ Inspired by these:
 - https://github.com/ThePrimeagen/.dotfiles/blob/master/bin/.local/scripts/tmux-sessionizer
 - https://crates.io/crates/tmux-sessionizer
 - https://github.com/petobens/dotfiles/commit/c21c306660142d93d283186210ad9d301a2f5186
+
+## Contributors
+
+<a href="https://github.com/omerxx/tmux-sessionx/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=omerxx/tmux-sessionx" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).
