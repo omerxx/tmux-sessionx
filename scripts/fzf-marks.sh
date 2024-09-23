@@ -45,5 +45,5 @@ get_fzf-marks_keybind() {
 }
 
 load_fzf-marks_binding(){
-  echo "$(get_fzf-marks_keybind):reload(cat $FZF_MARKS_FILE)+change-preview(sed 's/.*: \(.*\)$/\1/' <<< {} | xargs ls)"
+  echo "$(get_fzf-marks_keybind):reload(cat $(get_fzf-marks_file))+change-preview(sed 's/.*: \(.*\)$/\1/' <<< {} | xargs $(tmux_option_or_fallback "@sessionx-ls-command" "ls"))"
 }
