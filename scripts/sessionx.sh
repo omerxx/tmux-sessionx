@@ -155,6 +155,8 @@ handle_output() {
 		fi
 	fi
 	tmux switch-client -t "$target"
+
+	exit 0
 }
 
 handle_args() {
