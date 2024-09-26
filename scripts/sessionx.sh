@@ -39,7 +39,7 @@ input() {
 			sessions=$(get_sorted_sessions)
 		fi
     [ -z "$sessions" ] && sessions="$current_session"
-    echo $sessions
+    echo "$sessions"
 	fi
 }
 
