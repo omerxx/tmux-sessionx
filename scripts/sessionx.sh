@@ -76,7 +76,7 @@ handle_binds() {
 input() {
 	default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
 	if [[ "$default_window_mode" == "on" ]]; then
-		(tmux list-windows -a -F '#{session_name}:#{window_index} #{window_name}')
+		tmux list-windows -a -F '#{session_name}:#{window_index} #{window_name}'
 	else
 		filter_current_session=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
 		if [[ "$filter_current_session" == "true" ]]; then
