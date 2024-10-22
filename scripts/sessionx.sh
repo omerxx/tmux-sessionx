@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# vi: sw=4 ts=4 noet
+
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 Z_MODE="off"
 
@@ -20,15 +22,15 @@ get_sorted_sessions() {
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -v "^$last_session$")
 	filtered_sessios=$(tmux_option_or_fallback "@sessionx-filtered-sessions" "")
 	if [[ -n "$filtered_sessios" ]]; then
-	  filtered_and_piped=$(echo "$filtered_sessios" | sed -E 's/,/|/g')
-	  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
+		filtered_and_piped=$(echo "$filtered_sessios" | sed -E 's/,/|/g')
+		sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
 	fi
 	echo -e "$sessions\n$last_session" | awk '!seen[$0]++'
 }
 
 input() {
 	default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
-  current_session="$(tmux display-message -p '#S')"
+	current_session="$(tmux display-message -p '#S')"
 	if [[ "$default_window_mode" == "on" ]]; then
 		tmux list-windows -a -F '#{session_name}:#{window_index} #{window_name}'
 	else
@@ -38,8 +40,8 @@ input() {
 		else
 			sessions=$(get_sorted_sessions)
 		fi
-    [ -z "$sessions" ] && sessions="$current_session"
-    echo "$sessions"
+		[ -z "$sessions" ] && sessions="$current_session"
+		echo "$sessions"
 	fi
 }
 
@@ -122,7 +124,7 @@ ARGS=$1
 INPUT=$(input)
 ADDITIONAL_INPUT=$(additional_input)
 if [[ -n $ADDITIONAL_INPUT ]]; then
-  INPUT="$ADDITIONAL_INPUT\n$INPUT"
+	INPUT="$ADDITIONAL_INPUT\n$INPUT"
 fi
 
 
@@ -131,12 +133,12 @@ build_fzf_cmd() {
 
 	window_height=$(tmux_option_or_fallback "@sessionx-window-height" "75%")
 	window_width=$(tmux_option_or_fallback "@sessionx-window-width" "75%")
-		
-  if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
-    COMMAND="fzf --tmux $window_width,$window_height"
-  else
-    COMMAND="fzf-tmux -p '$window_width,$window_height' --"
-  fi
+
+	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
+		COMMAND="fzf --tmux $window_width,$window_height"
+	else
+		COMMAND="fzf-tmux -p '$window_width,$window_height' --"
+	fi
 }
 
 build_fzf_cmd
