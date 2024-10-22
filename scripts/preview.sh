@@ -105,7 +105,7 @@ while getopts ":hptw" opt; do
 	esac
 done
 
-shift $(($OPTIND - 1))
+shift $((OPTIND - 1))
 SESSION="$1"
 
 if test "${SESSION}" == '*Last*'; then
@@ -123,4 +123,4 @@ window) window_mode "${SESSION}" ;;
 *) echo "Unknown mode \"${mode}\"" ;;
 esac
 
-exit $status
+exit "${status:-0}"

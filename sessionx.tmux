@@ -10,7 +10,7 @@ tmux_option_or_fallback() {
 	echo "$option_value"
 }
 
-if [ `tmux_option_or_fallback "@sessionx-prefix" "on"` = "on"  ]; then
+if [ "$(tmux_option_or_fallback "@sessionx-prefix" "on")" = "on"  ]; then
 	tmux bind-key "$(tmux_option_or_fallback "@sessionx-bind" "O")" run-shell "$CURRENT_DIR/scripts/sessionx.sh"
 else
 	tmux bind-key -n "$(tmux_option_or_fallback "@sessionx-bind" "O")" run-shell "$CURRENT_DIR/scripts/sessionx.sh"

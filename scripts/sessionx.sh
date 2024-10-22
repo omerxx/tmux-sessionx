@@ -6,6 +6,8 @@ Z_MODE="off"
 
 source "$CURRENT_DIR/tmuxinator.sh"
 source "$CURRENT_DIR/fzf-marks.sh"
+source "$CURRENT_DIR/cache_options.sh"
+cache_tmux_options
 
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
@@ -16,15 +18,6 @@ get_sorted_sessions() {
 	  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
 	fi
 	echo -e "$sessions\n$last_session" | awk '!seen[$0]++'
-}
-
-tmux_option_or_fallback() {
-	local option_value
-	option_value="$(tmux show-option -gqv "$1")"
-	if [ -z "$option_value" ]; then
-		option_value="$2"
-	fi
-	echo "$option_value"
 }
 
 preview_settings() {
