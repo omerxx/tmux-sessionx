@@ -5,6 +5,8 @@
 CURRENT_DIR="$(realpath "$(dirname "$0")")"
 SCRIPTS_DIR="$CURRENT_DIR/scripts"
 
+source "scripts/*"
+
 tmux_option_or_fallback() {
     local option_value
     option_value="$(tmux show-option -gqv "$1")"
