@@ -151,16 +151,30 @@ build_args() {
         args+=(--bind "$(load_fzf-marks_binding)")
     fi
 
-    echo ${args[@]}
-}
-
-build_fzf_opts() {
     additional_fzf_options=$(tmux_option_or_fallback "@sessionx-additional-options" "--color pointer:9,spinner:92,marker:46")
-    echo $additional_fzf_options
+	args+=($(additional_fzf_options))
+
+	tmux set-option -g @sessionx-_built-args "${args[*]}"
 }
 
-cmd="$SCRIPTS_DIR/sessionx.sh \"$(build_args) $(build_fzf_opts)\""
+build_fzf_cmd() {
+	FZF_BUILTIN_TMUX=$(tmux_option_or_fallback "@sessionx-fzf-builtin-tmux" "off")
 
+	window_height=$(tmux_option_or_fallback "@sessionx-window-height" "75%")
+	window_width=$(tmux_option_or_fallback "@sessionx-window-width" "75%")
+
+	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
+		cmd="fzf --tmux $window_width,$window_height"
+	else
+		cmd="fzf-tmux -p '$window_width,$window_height' --"
+	fi
+	tmux set-option -g @sessionx-_built-command "$cmd"
+}
+
+build_args
+build_fzf_cmd
+
+cmd="$SCRIPTS_DIR/sessionx.sh"
 
 tmux_bind="$(tmux_option_or_fallback "@sessionx-bind" "O")"
 if [ `tmux_option_or_fallback "@sessionx-prefix" "on"` = "on"  ]; then

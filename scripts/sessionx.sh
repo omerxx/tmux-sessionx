@@ -5,8 +5,7 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 Z_MODE="off"
 
-source "$CURRENT_DIR/tmuxinator.sh"
-source "$CURRENT_DIR/fzf-marks.sh"
+source $CURRENT_DIR/*.sh
 
 tmux_option_or_fallback() {
 	local option_value
@@ -119,7 +118,8 @@ handle_output() {
 
 # MAIN
 
-ARGS=$1
+ARGS=$(tmux show-option -gqv @sessionx-_built-args)
+COMMAND=$(tmux show-option -gqv @sessionx-_built-command)
 
 INPUT=$(input)
 ADDITIONAL_INPUT=$(additional_input)
@@ -128,25 +128,10 @@ if [[ -n $ADDITIONAL_INPUT ]]; then
 fi
 
 
-build_fzf_cmd() {
-	FZF_BUILTIN_TMUX=$(tmux_option_or_fallback "@sessionx-fzf-builtin-tmux" "off")
-
-	window_height=$(tmux_option_or_fallback "@sessionx-window-height" "75%")
-	window_width=$(tmux_option_or_fallback "@sessionx-window-width" "75%")
-
-	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
-		COMMAND="fzf --tmux $window_width,$window_height"
-	else
-		COMMAND="fzf-tmux -p '$window_width,$window_height' --"
-	fi
-}
-
-build_fzf_cmd
-
 
 echo $(echo -e "${INPUT}" | sed -E 's/✗/ /g') $COMMAND $ARGS | wl-copy
 
 
-RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | sh -c "$COMMAND $ARGS 2>>/tmp/tmux-sessionx.log" | tail -n1)
+RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | bash -c "$COMMAND $ARGS 2>>/tmp/tmux-sessionx.log" | tail -n1)
 
 handle_output "$RESULT"
