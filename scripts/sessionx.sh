@@ -18,6 +18,15 @@ get_sorted_sessions() {
 	echo -e "$sessions\n$last_session" | awk '!seen[$0]++'
 }
 
+tmux_option_or_fallback() {
+	local option_value
+	option_value="$(tmux show-option -gqv "$1")"
+	if [ -z "$option_value" ]; then
+		option_value="$2"
+	fi
+	echo "$option_value"
+}
+
 input() {
 	default_window_mode=${extra_options["window-mode"]}
 	if [[ "$default_window_mode" == "on" ]]; then
