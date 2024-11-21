@@ -4,7 +4,7 @@ A fuzzy Tmux session manager with preview capabilities, deleting, renaming and m
 
 ![image](./img/sessionxv2.png)
 
-## Prerequisits 🛠️
+## Prerequisites 🛠️
 
 - [tpm](https://github.com/tmux-plugins/tpm)
 - [fzf](https://github.com/junegunn/fzf)
@@ -71,7 +71,7 @@ set -g @sessionx-window-mode 'on'
 set -g @sessionx-tree-mode 'on'
 
 # Preview location and screenspace can be adjusted with these
-# Reminder: it can be toggeled on/off with `?`
+# Reminder: it can be toggled on/off with `?`
 set -g @sessionx-preview-location 'right'
 set -g @sessionx-preview-ratio '55%'
 
@@ -85,7 +85,7 @@ set -g @sessionx-window-width '75%'
 # If you want change the layout to top you can set
 set -g @sessionx-layout 'reverse'
 
-# If you want to change the prompt, the space is nedded to not overlap the icon
+# If you want to change the prompt, the space is needed to not overlap the icon
 set -g @sessionx-prompt " "
 
 # If you want to change the pointer
@@ -126,7 +126,7 @@ set -g @sessionx-filtered-sessions 'scratch,somesession'
 
 ## Working with SessionX 👷
 
-Launching the plugin pops up an fzf-tmux "popup" with fizzy search over existing session (-current session).
+Launching the plugin pops up an fzf-tmux "popup" with fuzzy search over existing session (-current session).
 If you insert a non-existing name and hit enter, a new session with that name will be created.
 
 - `alt+backspace` will delete the selected session
@@ -136,7 +136,7 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `Ctrl-p` select preview down
 - `Ctrl-r` "read": will launch a `read` prompt to rename a session within the list
 - `Ctrl-w` "window": will reload the list with all the available _windows_ and their preview
-- `Ctrl-x` will fuzzy read `~/.config` or a configureable path of your choice (with `@session-x-path`)
+- `Ctrl-x` will fuzzy read `~/.config` or a configurable path of your choice (with `@session-x-path`)
 - `Ctrl-e` "expand": will expand `PWD` and search for local directories to create additional session from
 - `Ctrl-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
 - `Ctrl-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
@@ -214,7 +214,7 @@ set -g @sessionx-bind-fzf-marks 'alt-g'
 ## [Tmuxinator](https://github.com/tmuxinator/tmuxinator) Integration 🚀
 
 If you want sessionx to detect existing tmuxinator projects, you can set a `sessionx-tmuxinator-mode` in your config (see snippet below).
-With Tmuxinaor turned 'on' (off by default), the plugin will take a given name and look for a tmuxinator project with that name. If found, it'll **launch the template using tmuxinator**!.
+With Tmuxinator turned 'on' (off by default), the plugin will take a given name and look for a tmuxinator project with that name. If found, it'll **launch the template using tmuxinator**!.
 There's also a binding to list tmuxinator projects, defaulting to `Ctrl-/`, configurable via:
 
 ```bash
@@ -246,7 +246,7 @@ set -g @sessionx-bind-fzf-marks 'alt-g'
 ## WARNING ⚠️
 
 - If you're running `fzf` lower than [0.35.0](https://github.com/junegunn/fzf/releases/tag/0.35.0) there are a few missing missing features that might break the plugin. Either consider upgrading or add `@sessionx-legacy-fzf-support 'on'` to your config (see [configuration](#additional-configuration-options))
-- This plugin is not designed to be used outside Tmux, although PRs are happily recieved!
+- This plugin is not designed to be used outside Tmux, although PRs are happily received!
 
 ## Thanks ❤️
 
