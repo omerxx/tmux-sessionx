@@ -6,6 +6,12 @@
 #   https://github.com/petobens/dotfiles/blob/master/tmux/tmux_tree
 
 single_mode() {
+  # check if it's a custom directory
+  if test -d "${1}"; then
+    display_directory "${1}"
+    return
+  fi
+
 	session_name="${1}"
 	if test "${DISPLAY_TMUXP}" -eq 1; then
 		if $(tmux has-session -t "${session_name}" >&/dev/null); then
@@ -28,6 +34,13 @@ tmux_option_or_fallback() {
 		option_value="$2"
 	fi
 	echo "$option_value"
+}
+
+# Display a directory using the configured ls command
+display_directory() {
+  directory_name="${1}"
+  ls_command=$(tmux_option_or_fallback "@sessionx-ls-command" "ls")
+  eval "${ls_command} ${directory_name}"
 }
 
 # Display a single sesssion
