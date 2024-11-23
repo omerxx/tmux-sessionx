@@ -7,7 +7,7 @@ is_fzf-marks_enabled() {
 	  fzf_marks_mode=$(tmux_option_or_fallback "@sessionx-fzf-marks-mode" "off")
   fi
 
-  if [[ "$fzf_marks_mode" != "on" ]]; then
+  if [[ "${fzf_marks_mode:-off}" != "on" ]]; then
     return 1
   fi
 
