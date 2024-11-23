@@ -129,9 +129,6 @@ fi
 
 
 
-echo $(echo -e "${INPUT}" | sed -E 's/✗/ /g') $COMMAND $ARGS | wl-copy
-
-
 RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | bash -c "$COMMAND $ARGS 2>>/tmp/tmux-sessionx.log" | tail -n1)
 
 handle_output "$RESULT"

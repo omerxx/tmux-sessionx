@@ -2,10 +2,13 @@
 
 # vi: sw=4 ts=4 noet
 
+set -euo pipefail
+
 CURRENT_DIR="$(realpath "$(dirname "$0")")"
 SCRIPTS_DIR="$CURRENT_DIR/scripts"
 
-source $SCRIPTS_DIR/*
+source $SCRIPTS_DIR/tmuxinator.sh
+source $SCRIPTS_DIR/fzf-marks.sh
 
 tmux_option_or_fallback() {
     local option_value
@@ -63,6 +66,9 @@ build_args() {
     window_settings
     preview_settings
 
+	FZF_BUILTIN_TMUX=$(tmux_option_or_fallback "@sessionx-fzf-builtin-tmux" "off")
+
+
     Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
     LS_COMMAND=$(tmux_option_or_fallback "@sessionx-ls-command" "ls")
 
@@ -74,7 +80,7 @@ build_args() {
 
     NEW_WINDOW="$bind_new_window:reload(find $PWD -mindepth 1 -maxdepth 1 -type d -o -type l)+change-preview($LS_COMMAND {})"
     ZO_WINDOW="$bind_zo:reload(zoxide query -l)+change-preview($LS_COMMAND {})"
-    BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview($SCRIPTS_DIR/preview.sh {1})"
+    BACK="$bind_back:reload(echo -e \"\${INPUT// /}\")+change-preview($SCRIPTS_DIR/preview.sh {1})"
     KILL_SESSION="$bind_kill_session:execute-silent(tmux kill-session -t {})+reload($SCRIPTS_DIR/reload_sessions.sh)"
 
     ACCEPT="$bind_accept:replace-query+print-query"
@@ -101,7 +107,7 @@ build_args() {
         fzf_size_arg="-p"
     fi
     if [[ "$preview_enabled" == "true" ]]; then
-        PREVIEW_LINE="$SCRIPTS_DIR/preview.sh ${PREVIEW_OPTIONS} {}"
+        PREVIEW_LINE="$SCRIPTS_DIR/preview.sh ${PREVIEW_OPTIONS:-""} {}"
     fi
 
     args=(
@@ -145,21 +151,19 @@ build_args() {
     fi
 
     if $(is_tmuxinator_enabled); then
-        args+=(--bind "$(load_tmuxinator_binding)")
+        args+=(--bind "'$(load_tmuxinator_binding)'")
     fi
     if $(is_fzf-marks_enabled); then
-        args+=(--bind "$(load_fzf-marks_binding)")
+        args+=(--bind "'$(load_fzf-marks_binding)'")
     fi
 
     additional_fzf_options=$(tmux_option_or_fallback "@sessionx-additional-options" "--color pointer:9,spinner:92,marker:46")
-	args+=($(additional_fzf_options))
+	args+=($additional_fzf_options)
 
 	tmux set-option -g @sessionx-_built-args "${args[*]}"
 }
 
 build_fzf_cmd() {
-	FZF_BUILTIN_TMUX=$(tmux_option_or_fallback "@sessionx-fzf-builtin-tmux" "off")
-
 	window_height=$(tmux_option_or_fallback "@sessionx-window-height" "75%")
 	window_width=$(tmux_option_or_fallback "@sessionx-window-width" "75%")
 
