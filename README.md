@@ -136,6 +136,7 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `Ctrl-p` select preview down
 - `Ctrl-r` "read": will launch a `read` prompt to rename a session within the list
 - `Ctrl-w` "window": will reload the list with all the available _windows_ and their preview
+- `Ctrl-f` will search zoxide paths ordered by [frecency](https://github.com/ajeetdsouza/zoxide/wiki/Algorithm#frecency)
 - `Ctrl-x` will fuzzy read `~/.config` or a configurable path of your choice (with `@session-x-path`)
 - `Ctrl-e` "expand": will expand `PWD` and search for local directories to create additional session from
 - `Ctrl-b` "back": reloads the first query. Useful when going into window or expand mode, to go back
