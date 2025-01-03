@@ -20,6 +20,47 @@ Add this to your `.tmux.conf` and run `Ctrl-I` for TPM to install the plugin.
 set -g @plugin 'omerxx/tmux-sessionx'
 ```
 
+<details>
+  <summary>
+  Install on Nix
+  </summary>
+
+Currently only supported using flakes.
+
+#### In your flake.nix inputs
+
+```nix
+
+inputs.tmux-sessionx.url = "github:omerxx/tmux-sessionx";
+
+# ...
+
+# include inputs as special args for your systems configuration if you havent done already
+# this makes the inputs available to all your modules
+nixosConfigurations."system-name" = nixpkgs.lib.nixosSystem {
+    specialArgs = {inherit inputs;};
+    modules = [
+        # most likely your configuration.nix
+        # as well as others
+    ];
+  };
+```
+
+#### In your tmux.nix configuration or anywhere else in your configuration
+
+```nix
+
+programs.tmux.plugins = [
+  {
+    # Need to change <system> to your aarch or use ${pkgs.system} to interpolate aarch
+    plugin = inputs.tmux-sessionx.packages.<system>.default;
+    extraConfig = ''''
+  }
+]
+```
+
+</details>
+
 ## Configure ⚙️
 
 The default binding for this plugin is `<prefix>+O`
