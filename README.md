@@ -11,6 +11,7 @@ A fuzzy Tmux session manager with preview capabilities, deleting, renaming and m
 - [fzf-tmux](https://github.com/junegunn/fzf#fzf-tmux-script)
 - [bat](https://github.com/sharkdp/bat)
 - Optional: [zoxide](https://github.com/ajeetdsouza/zoxide)
+- Optional: [tmuxinator](https://github.com/tmuxinator/tmuxinator)
 
 ## Install 💻
 
@@ -30,7 +31,7 @@ You can change it by adding this line with your desired key:
 set -g @sessionx-bind '<mykey>'
 ```
 
-### Additional configuration options:
+### Additional configuration options
 
 ```bash
 # By default, tmux `<prefix>` key needs to pressed before `<mykey>` to launch
@@ -114,6 +115,12 @@ set -g @sessionx-legacy-fzf-support 'on'
 # If found, it'll launch the template using tmuxinator
 set -g @sessionx-tmuxinator-mode 'off'
 
+# When set to on, with a tmuxinator/default.yml existing, entering a session name
+# which doesnt exist will launch a fzf-tmux window in home directory to allow you
+# to select a directory to launch new session in
+# While selecting directory tab traverses deeper into subdirectories
+set -g @sessionx-dir-select 'on'
+
 # Turn on fzf-marks (default: off) mode to launch a new session from your marks
 set -g @sessionx-fzf-marks-mode 'off'
 
@@ -144,7 +151,7 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `Ctrl-g` "fzf-marks": show fzf-marks marks
 - `?` toggles the preview pane
 
-### Rebind keys:
+### Rebind keys
 
 If you want to change the default key bindings, you can do using this configuration options:
 
@@ -252,10 +259,10 @@ set -g @sessionx-bind-fzf-marks 'alt-g'
 
 Inspired by these:
 
-- https://github.com/joshmedeski/t-smart-tmux-session-manager
-- https://github.com/ThePrimeagen/.dotfiles/blob/master/bin/.local/scripts/tmux-sessionizer
-- https://crates.io/crates/tmux-sessionizer
-- https://github.com/petobens/dotfiles/commit/c21c306660142d93d283186210ad9d301a2f5186
+- <https://github.com/joshmedeski/t-smart-tmux-session-manager>
+- <https://github.com/ThePrimeagen/.dotfiles/blob/master/bin/.local/scripts/tmux-sessionizer>
+- <https://crates.io/crates/tmux-sessionizer>
+- <https://github.com/petobens/dotfiles/commit/c21c306660142d93d283186210ad9d301a2f5186>
 
 ## Contributors
 
