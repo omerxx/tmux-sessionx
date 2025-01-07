@@ -8,10 +8,6 @@
   outputs = inputs @ {flake-parts, ...}:
     flake-parts.lib.mkFlake {inherit inputs;} {
       imports = [
-        # To import a flake module
-        # 1. Add foo to inputs
-        # 2. Add foo as a parameter to the outputs function
-        # 3. Add here: foo.flakeModule
       ];
       systems = ["x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin"];
       perSystem = {
@@ -23,17 +19,12 @@
         lib,
         ...
       }: {
-        # Per-system attributes can be defined here. The self' and inputs'
-        # module parameters provide easy access to attributes of the same
-        # system.
-
-        # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
         packages.default = pkgs.tmuxPlugins.mkTmuxPlugin {
           pluginName = "sessionx";
           version = "dev";
 
           src = ./.;
-          nativeBuildInputs = [ pkgs.makeWrapper ];
+          nativeBuildInputs = [pkgs.makeWrapper];
 
           postPatch = ''
             substituteInPlace sessionx.tmux \
@@ -47,13 +38,13 @@
           postInstall = ''
             chmod +x $target/scripts/sessionx.sh
             wrapProgram $target/scripts/sessionx.sh \
-              --prefix PATH : ${with pkgs; lib.makeBinPath [ zoxide fzf gnugrep gnused coreutils ]}
+              --prefix PATH : ${with pkgs; lib.makeBinPath [zoxide fzf gnugrep gnused coreutils]}
             chmod +x $target/scripts/preview.sh
             wrapProgram $target/scripts/preview.sh \
-              --prefix PATH : ${with pkgs; lib.makeBinPath [ coreutils gnugrep gnused ]}
+              --prefix PATH : ${with pkgs; lib.makeBinPath [coreutils gnugrep gnused]}
             chmod +x $target/scripts/reload_sessions.sh
             wrapProgram $target/scripts/reload_sessions.sh \
-              --prefix PATH : ${with pkgs; lib.makeBinPath [ coreutils gnugrep gnused ]}
+              --prefix PATH : ${with pkgs; lib.makeBinPath [coreutils gnugrep gnused]}
           '';
 
           meta = with lib; {
