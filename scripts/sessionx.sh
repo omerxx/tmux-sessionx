@@ -94,7 +94,7 @@ handle_output() {
 			tmuxinator start "$target"
 		elif test -n "$mark"; then
 			tmux new-session -ds "$mark" -c "$target"
-			target="$mark"
+			target=$(echo "$mark" | tr '.' '_')
 		elif test -d "$target"; then
 			d_target="$(basename "$target" | tr -d '.')"
 			tmux new-session -ds $d_target -c "$target"
