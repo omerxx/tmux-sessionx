@@ -130,7 +130,34 @@ run_plugin() {
 	args+=(--bind "$BACK")
 
 	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
-		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf --tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+		# Extract dimensions from args
+		dimensions=""
+		# Need to filter out -p flag and dimensions from args
+		declare -a filtered_args=()
+		for ((i=0; i<${#args[@]}; i++)); do
+			arg="${args[i]}"
+			# Skip -p flag but capture dimensions
+			if [[ "$arg" == "-p" && $((i+1)) -lt ${#args[@]} ]]; then
+				dimensions="${args[i+1]}"
+				# Skip both flag and dimensions
+				((i++))
+				continue
+			fi
+			# Also capture dimensions directly if they match the pattern
+			if [[ "$arg" =~ [0-9]+%,[0-9]+% ]]; then
+				dimensions="$arg"
+				continue
+			fi
+			filtered_args+=("$arg")
+		done
+		
+		# If dimensions weren't found, use default
+		if [[ -z "$dimensions" ]]; then
+			dimensions="75%,75%"
+		fi
+		
+		# Use separate --tmux flag with extracted dimensions for FZF
+		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf --tmux="$dimensions" "${fzf_opts[@]}" "${filtered_args[@]}" | tail -n1)
 	else
 		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	fi
