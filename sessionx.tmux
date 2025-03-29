@@ -96,12 +96,6 @@ handle_args() {
 		HEADER="$HEADER  $(get_fzf-marks_keybind)=󰣉"
 	fi
 
-	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
-		fzf_size_arg="--tmux"
-	else
-		fzf_size_arg="-p"
-	fi
-
 	args=(
 		--bind "$TREE_MODE"
 		--bind "$CONFIGURATION_MODE"
@@ -125,7 +119,6 @@ handle_args() {
 		--preview-window="${preview_location},${preview_ratio},,"
 		--layout="$layout_mode"
 		--pointer="$pointer_icon"
-		"${fzf_size_arg}" "$window_width,$window_height"
 		--prompt "$prompt_icon"
 		--print-query
 		--tac
@@ -160,6 +153,9 @@ handle_extra_options() {
 	extra_options["filter-current"]=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
 	extra_options["custom-paths"]=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
 	extra_options["custom-paths-subdirectories"]=$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")
+	extra_options["fzf-builtin-tmux"]=$FZF_BUILTIN_TMUX
+	extra_options["window-width"]=$window_width
+	extra_options["window-height"]=$window_height
 	tmux set-option -g @sessionx-_built-extra-options "$(declare -p extra_options)"
 }
 
