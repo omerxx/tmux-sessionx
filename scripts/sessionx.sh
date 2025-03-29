@@ -130,7 +130,7 @@ run_plugin() {
 	args+=(--bind "$BACK")
 
 	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
-		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf --tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	else
 		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	fi
