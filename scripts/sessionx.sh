@@ -9,7 +9,7 @@ source "$CURRENT_DIR/fzf-marks.sh"
 
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
-	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -v "^$last_session$")
+	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -Fxv "$last_session")
 	filtered_sessios=${extra_options["filtered-sessions"]}
 	if [[ -n "$filtered_sessios" ]]; then
 	  filtered_and_piped=$(echo "$filtered_sessios" | sed -E 's/,/|/g')
@@ -34,7 +34,7 @@ input() {
 	else
 		filter_current_session=${extra_options["filter-current"]}
 		if [[ "$filter_current_session" == "true" ]]; then
-			(get_sorted_sessions | grep -v "$CURRENT$") || echo "$CURRENT"
+			(get_sorted_sessions | grep -Fxv "$CURRENT") || echo "$CURRENT"
 		else
 			(get_sorted_sessions) || echo "$CURRENT"
 		fi
