@@ -25,7 +25,49 @@ set -g @plugin 'omerxx/tmux-sessionx'
   Install on Nix
   </summary>
 
-Currently only supported using flakes.
+
+### Via Nixpkgs
+
+The plugin can be [found in Nixpkgs](https://search.nixos.org/packages?channel=unstable&show=tmuxPlugins.tmux-sessionx&from=0&size=50&sort=relevance&type=packages&query=sessionx) and can be installed in one of three ways:
+
+#### Via nix-env
+
+##### On NixOS
+
+```bash
+nix-env -iA nixos.tmuxPlugins.tmux-sessionx
+```
+
+##### Non NixOS
+
+```bash
+# without flakes:
+nix-env -iA nixpkgs.tmuxPlugins.tmux-sessionx
+# with flakes:
+nix profile install nixpkgs#tmuxPlugins.tmux-sessionx
+```
+
+#### Via NixOS Configuration
+
+Add the following Nix code to your NixOS Configuration, usually located in `/etc/nixos/configuration.nix`.
+
+```nix
+environment.systemPackages = [
+    pkgs.tmuxPlugins.tmux-sessionx
+];
+```
+
+#### Via nix-shell
+
+A nix-shell will temporarily modify your `$PATH` environment variable. This can be used to try a piece of software before deciding to permanently install it.
+
+```bash
+nix-shell -p tmuxPlugins.tmux-sessionx
+```
+
+### Via flakes
+
+You may find that Nixpkgs does not have the latest updates of this plugin, this is where you might want to use a custom flake:
 
 #### In your flake.nix inputs
 
