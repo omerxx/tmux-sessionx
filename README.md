@@ -183,6 +183,7 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `Ctrl-t` "tree": reloads the preview with the tree of sessions+windows familiar from the native session manager (C-S)
 - `Ctrl-/` "tmuxinator": fetches a list of tmuxinator sessions and previews them
 - `Ctrl-g` "fzf-marks": show fzf-marks marks
+- `Ctrl-h` "help": displays a help screen with all keybindings
 - `?` toggles the preview pane
 
 ### Rebind keys:
@@ -250,6 +251,10 @@ set -g @sessionx-bind-tmuxinator-list 'alt-t'
 
 # This command open fzf-marks marks.
 set -g @sessionx-bind-fzf-marks 'alt-g'
+
+# This command opens the help screen.
+# By default, it is set to `ctrl-h`.
+set -g @sessionx-bind-help 'alt-h'
 ```
 
 ## [Tmuxinator](https://github.com/tmuxinator/tmuxinator) Integration 🚀

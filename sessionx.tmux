@@ -59,6 +59,7 @@ handle_binds() {
 	bind_select_up=$(tmux_option_or_fallback "@sessionx-bind-select-up" "ctrl-n")
 	bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-p")
 
+	bind_help=$(tmux_option_or_fallback "@sessionx-bind-help" "ctrl-h")
 }
 
 handle_args() {
@@ -90,6 +91,7 @@ handle_args() {
 	RENAME_SESSION_EXEC='bash -c '\'' printf >&2 "New name: ";read name; tmux rename-session -t {1} "${name}"; '\'''
 	RENAME_SESSION_RELOAD='bash -c '\'' tmux list-sessions | sed -E "s/:.*$//"; '\'''
 	RENAME_SESSION="$bind_rename_session:execute($RENAME_SESSION_EXEC)+reload($RENAME_SESSION_RELOAD)"
+	HELP="$bind_help:execute-silent(${SCRIPTS_DIR%/}/help.sh  < /dev/null |  less -R)"
 
 	HEADER="$bind_accept=󰿄  $bind_kill_session=󱂧  $bind_rename_session=󰑕  $bind_configuration_mode=󱃖  $bind_window_mode=   $bind_new_window=󰇘  $bind_back=󰌍  $bind_tree_mode=󰐆   $bind_scroll_up=  $bind_scroll_down= / $bind_zo="
 	if is_fzf-marks_enabled; then
@@ -117,6 +119,7 @@ handle_args() {
 		--bind "$SCROLL_UP"
 		--bind "$SCROLL_DOWN"
 		--bind "$RENAME_SESSION"
+		--bind "$HELP"
 		--bind '?:toggle-preview'
 		--bind 'change:first'
 		--exit-0
