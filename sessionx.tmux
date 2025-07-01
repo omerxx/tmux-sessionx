@@ -66,7 +66,6 @@ handle_args() {
 	if [[ "$preview_enabled" == "true" ]]; then
 		PREVIEW_LINE="${SCRIPTS_DIR%/}/preview.sh ${PREVIEW_OPTIONS} {}"
 	fi
-	Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
 	CONFIGURATION_PATH=$(tmux_option_or_fallback "@sessionx-x-path" "$HOME/.config")
 	FZF_BUILTIN_TMUX=$(tmux_option_or_fallback "@sessionx-fzf-builtin-tmux" "off")
 
