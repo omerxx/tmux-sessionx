@@ -130,10 +130,18 @@ run_plugin() {
 	handle_input
 	args+=(--bind "$BACK")
 
-	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
-		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+	# Use the fzf-builtin-tmux option from extra_options
+	fzf_builtin_tmux=${extra_options["fzf-builtin-tmux"]}
+	window_width=${extra_options["window-width"]}
+	window_height=${extra_options["window-height"]}
+	dimensions="${window_width},${window_height}"
+
+	if [[ "$fzf_builtin_tmux" == "on" ]]; then
+		# Use fzf with --tmux flag
+		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf --tmux="$dimensions" "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	else
-		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+		# Use fzf-tmux with -p flag
+		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux -p "$dimensions" "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	fi
 }
 
