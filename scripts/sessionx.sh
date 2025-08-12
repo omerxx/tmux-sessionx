@@ -41,6 +41,71 @@ input() {
 	fi
 }
 
+template() {
+	local template="$1"
+	local path="$2"
+	
+	path="${path#/}"
+	path="${path%/}"
+	IFS='/' read -ra parts <<< "$path"
+	local total=${#parts[@]}
+	
+	while [[ $template =~ \{([^}]+)\} ]]; do
+		local expr="${BASH_REMATCH[1]}"
+		local result=""
+		
+		case "$expr" in
+			"basename"|"-1")
+				result="${parts[-1]}"
+				;;
+			"parent"|"-2")
+				result="${parts[-2]}"
+				;;
+			"grandparent"|"-3")
+				result="${parts[-3]}"
+				;;
+			[0-9]*)
+				if [[ $expr -lt $total ]]; then
+					result="${parts[$expr]}"
+				fi
+				;;
+			-[0-9]*)
+				local actual_index=$((total + expr))
+				if [[ $actual_index -ge 0 && $actual_index -lt $total ]]; then
+					result="${parts[$actual_index]}"
+				fi
+				;;
+			"upper:"*)
+				local target="${expr#upper:}"
+				local temp_result
+				temp_result=$(template "{$target}" "$path")
+				result="${temp_result^^}"
+				;;
+			"lower:"*)
+				local target="${expr#lower:}"
+				local temp_result
+				temp_result=$(template "{$target}" "$path")
+				result="${temp_result,,}"
+				;;
+			"replace:"*)
+				local rest="${expr#replace:}"
+				local new="${rest##*:}"
+				rest="${rest%:*}"
+				local old="${rest##*:}"
+				rest="${rest%:*}"
+				local target="$rest"
+				local temp_result
+				temp_result=$(template "{$target}" "$path")
+				result="${temp_result//$old/$new}"
+				;;
+		esac
+		
+		template="${template//\{$expr\}/$result}"
+	done
+	
+	echo "$template"
+}
+
 additional_input() {
 	sessions=$(get_sorted_sessions)
 	custom_paths=${extra_options["custom-paths"]}
@@ -96,8 +161,9 @@ handle_output() {
 			tmux new-session -ds "$mark" -c "$target"
 			target="$mark"
 		elif test -d "$target"; then
-			d_target="$(basename "$target" | tr -d '.')"
-			tmux new-session -ds $d_target -c "$target"
+			s_template=$(tmux_option_or_fallback "@sessionx-name-template" "{basename}")
+			d_target="$(template "$s_template" "$target")"
+			tmux new-session -ds "$d_target" -c "$target"
 			target=$d_target
 		else
 			if [[ "$Z_MODE" == "on" ]]; then
@@ -125,8 +191,8 @@ handle_input() {
 
 run_plugin() {
 	Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
-	eval $(tmux show-option -gqv @sessionx-_built-args)
-	eval $(tmux show-option -gqv @sessionx-_built-extra-options)
+	eval "$(tmux show-option -gqv @sessionx-_built-args)"
+	eval "$(tmux show-option -gqv @sessionx-_built-extra-options)"
 	handle_input
 	args+=(--bind "$BACK")
 
