@@ -65,6 +65,20 @@ additional_input() {
 	fi
 }
 
+run_startup_command() {
+	local session_name="$1"
+	local session_path="$2"
+
+	local startup_command
+	startup_command=$(tmux show-option -gv @sessionx-startup-command 2>/dev/null)
+
+	if [[ -n "$startup_command" ]]; then
+		startup_command="${startup_command//\{session\}/$session_name}"
+		startup_command="${startup_command//\{path\}/$session_path}"
+		tmux send-keys -t "$session_name" "$startup_command" Enter
+	fi
+}
+
 handle_output() {
 	if [ -d "$*" ]; then
 		# No special handling because there isn't a window number or window name present
@@ -94,17 +108,21 @@ handle_output() {
 			tmuxinator start "$target"
 		elif test -n "$mark"; then
 			tmux new-session -ds "$mark" -c "$target"
+			run_startup_command "$mark" "$target"
 			target="$mark"
 		elif test -d "$target"; then
 			d_target="$(basename "$target" | tr -d '.')"
 			tmux new-session -ds $d_target -c "$target"
+			run_startup_command "$d_target" "$target"
 			target=$d_target
 		else
 			if [[ "$Z_MODE" == "on" ]]; then
 				z_target=$(zoxide query "$target")
 				tmux new-session -ds "$target" -c "$z_target" -n "$z_target"
+				run_startup_command "$target" "$z_target"
 			else
 				tmux new-session -ds "$target"
+				run_startup_command "$target" "$(pwd)"
 			fi
 		fi
 	fi
