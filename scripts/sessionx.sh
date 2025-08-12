@@ -115,7 +115,8 @@ additional_input() {
 	else
 		clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
 		if [[ "$custom_path_subdirectories" == "true" ]]; then
-			paths=$(find ${clean_paths//,/ } -mindepth 1 -maxdepth 1 -type d)
+			custom_depth=$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories-depth" "1")
+			paths=$(find ${clean_paths//,/ } -mindepth "$custom_depth" -maxdepth "$custom_depth" -type d)
 		else
 			paths=${clean_paths//,/ }
 		fi
@@ -127,6 +128,20 @@ additional_input() {
 		}
 		export -f add_path
 		printf "%s\n" "${paths//,/$IFS}" | xargs -n 1 -P 0 bash -c 'add_path "$@"' _
+	fi
+}
+
+run_startup_command() {
+	local session_name="$1"
+	local session_path="$2"
+
+	local startup_command
+	startup_command=$(tmux show-option -gv @sessionx-startup-command 2>/dev/null)
+
+	if [[ -n "$startup_command" ]]; then
+		startup_command="${startup_command//\{session\}/$session_name}"
+		startup_command="${startup_command//\{path\}/$session_path}"
+		tmux send-keys -t "$session_name" "$startup_command" Enter
 	fi
 }
 
@@ -159,18 +174,22 @@ handle_output() {
 			tmuxinator start "$target"
 		elif test -n "$mark"; then
 			tmux new-session -ds "$mark" -c "$target"
+			run_startup_command "$mark" "$target"
 			target="$mark"
 		elif test -d "$target"; then
 			s_template=$(tmux_option_or_fallback "@sessionx-name-template" "{basename}")
 			d_target="$(template "$s_template" "$target")"
-			tmux new-session -ds "$d_target" -c "$target"
+			tmux new-session -ds $d_target -c "$target"
+			run_startup_command "$d_target" "$target"
 			target=$d_target
 		else
 			if [[ "$Z_MODE" == "on" ]]; then
 				z_target=$(zoxide query "$target")
 				tmux new-session -ds "$target" -c "$z_target" -n "$z_target"
+				run_startup_command "$target" "$z_target"
 			else
 				tmux new-session -ds "$target"
+				run_startup_command "$target" "$(pwd)"
 			fi
 		fi
 	fi

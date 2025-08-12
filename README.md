@@ -136,6 +136,12 @@ set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
 # under the aforementioned custom paths, e.g. /Users/me/projects/tmux-sessionx
 set -g @sessionx-custom-paths-subdirectories 'false'
 
+# When @sessionx-custom-paths-subdirectories is 'true', this option controls
+# the depth of subdirectories to search within custom paths.
+# Defaults to '1', meaning only direct subdirectories are included.
+# Example: set -g @sessionx-custom-paths-subdirectories-depth '2'
+set -g @sessionx-custom-paths-subdirectories-depth '1'
+
 # Uses `fzf --tmux` instead of the `fzf-tmux` script (requires fzf >= 0.53).
 set -g @sessionx-fzf-builtin-tmux 'on'
 
@@ -208,6 +214,11 @@ set -g @sessionx-additional-options "--color pointer:9,spinner:92,marker:46"
 # If you're running fzf lower than 0.35.0 there are a few missing features
 # Upgrade, or use this setting for support
 set -g @sessionx-legacy-fzf-support 'on'
+
+# Define a command to be executed automatically when a new session is created.
+# Use {session} as a placeholder for the new session's name and {path} for its working directory.
+# Example: set -g @sessionx-startup-command 'tmux new-window -t {session}:1 -n editor "nvim {path}" && tmux new-window -t {session}:2 -n shell'
+set -g @sessionx-startup-command '<command>'
 
 # With Tmuxinator turned 'on' (off by default), the plugin will take a given name
 # and look for a tmuxinator project with that name.
