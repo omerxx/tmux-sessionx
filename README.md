@@ -198,6 +198,11 @@ set -g @sessionx-additional-options "--color pointer:9,spinner:92,marker:46"
 # Upgrade, or use this setting for support
 set -g @sessionx-legacy-fzf-support 'on'
 
+# Define a command to be executed automatically when a new session is created.
+# Use {session} as a placeholder for the new session's name and {path} for its working directory.
+# Example: set -g @sessionx-startup-command 'tmux new-window -t {session}:1 -n editor "nvim {path}" && tmux new-window -t {session}:2 -n shell'
+set -g @sessionx-startup-command '<command>'
+
 # With Tmuxinator turned 'on' (off by default), the plugin will take a given name
 # and look for a tmuxinator project with that name.
 # If found, it'll launch the template using tmuxinator
