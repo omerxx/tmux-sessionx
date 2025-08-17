@@ -297,7 +297,7 @@ set -g @sessionx-bind-fzf-marks 'alt-g'
 ## [Tmuxinator](https://github.com/tmuxinator/tmuxinator) Integration 🚀
 
 If you want sessionx to detect existing tmuxinator projects, you can set a `sessionx-tmuxinator-mode` in your config (see snippet below).
-With Tmuxinator turned 'on' (off by default), the plugin will take a given name and look for a tmuxinator project with that name. If found, it'll **launch the template using tmuxinator**!.
+With Tmuxinator turned 'on' (off by default), the plugin will take a given name and look for a tmuxinator project with that name. It will look for local `.tmuxinator.yml` files as well. If found, it'll **launch the template using tmuxinator**!.
 There's also a binding to list tmuxinator projects, defaulting to `Ctrl-/`, configurable via:
 
 ```bash
