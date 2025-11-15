@@ -215,8 +215,8 @@ If you insert a non-existing name and hit enter, a new session with that name wi
 - `alt+backspace` will delete the selected session
 - `Ctrl-u` scroll preview up
 - `Ctrl-d` scroll preview down
-- `Ctrl-n` select preview up
-- `Ctrl-p` select preview down
+- `Ctrl-p` select session up
+- `Ctrl-n` select session down
 - `Ctrl-r` "read": will launch a `read` prompt to rename a session within the list
 - `Ctrl-w` "window": will reload the list with all the available _windows_ and their preview
 - `Ctrl-x` will fuzzy read `~/.config` or a configurable path of your choice (with `@session-x-path`)
