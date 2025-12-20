@@ -159,6 +159,7 @@ handle_extra_options() {
 	extra_options["filter-current"]=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
 	extra_options["custom-paths"]=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
 	extra_options["custom-paths-subdirectories"]=$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")
+	extra_options["custom-paths-max-depth"]=$(tmux_option_or_fallback "@sessionx-custom-paths-max-depth" "1")
 	tmux set-option -g @sessionx-_built-extra-options "$(declare -p extra_options)"
 }
 
