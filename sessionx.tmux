@@ -2,6 +2,7 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPTS_DIR="$CURRENT_DIR/scripts"
+CURRENT="$(tmux display-message -p '#S')"
 
 source "$SCRIPTS_DIR/tmuxinator.sh"
 source "$SCRIPTS_DIR/fzf-marks.sh"
