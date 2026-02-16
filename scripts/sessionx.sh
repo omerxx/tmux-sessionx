@@ -18,12 +18,7 @@ get_sorted_sessions() {
 	fi
 	local sorted
 	sorted=$(echo -e "$sessions\n$last_session" | awk '!seen[$0]++')
-	git_branch_mode=${extra_options["git-branch"]}
-	if [[ "$git_branch_mode" == "on" ]]; then
-		format_sessions_with_git_branch "$sorted"
-	else
-		echo "$sorted"
-	fi
+	echo "$sorted"
 }
 
 tmux_option_or_fallback() {
@@ -129,7 +124,12 @@ handle_input() {
 		INPUT="$(additional_input)\n$INPUT"
 	fi
 	bind_back=${extra_options["bind-back"]}
-	BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+	git_branch_mode=${extra_options["git-branch"]}
+	if [[ "$git_branch_mode" == "on" ]]; then
+		BACK="$bind_back:reload(${CURRENT_DIR}/sessions_with_branches.sh)+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+	else
+		BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+	fi
 }
 
 run_plugin() {
@@ -138,6 +138,11 @@ run_plugin() {
 	eval $(tmux show-option -gqv @sessionx-_built-extra-options)
 	handle_input
 	args+=(--bind "$BACK")
+
+	git_branch_mode=${extra_options["git-branch"]}
+	if [[ "$git_branch_mode" == "on" ]]; then
+		args+=(--bind "start:reload:${CURRENT_DIR}/sessions_with_branches.sh")
+	fi
 
 	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
 		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf "${fzf_opts[@]}" "${args[@]}" | tail -n1)
