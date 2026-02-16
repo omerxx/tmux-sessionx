@@ -6,24 +6,7 @@ Z_MODE="off"
 
 source "$CURRENT_DIR/tmuxinator.sh"
 source "$CURRENT_DIR/fzf-marks.sh"
-
-append_git_branch() {
-	local session_name="$1"
-	if [[ -z "$session_name" ]]; then
-		return
-	fi
-	local pane_path
-	pane_path=$(tmux list-panes -t "$session_name" -F '#{pane_current_path}' 2>/dev/null | head -1)
-	if [[ -n "$pane_path" ]]; then
-		local branch
-		branch=$(git -C "$pane_path" branch --show-current 2>/dev/null)
-		if [[ -n "$branch" ]]; then
-			echo "$session_name  $branch"
-			return
-		fi
-	fi
-	echo "$session_name"
-}
+source "$CURRENT_DIR/git-branch.sh"
 
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
@@ -37,9 +20,7 @@ get_sorted_sessions() {
 	sorted=$(echo -e "$sessions\n$last_session" | awk '!seen[$0]++')
 	git_branch_mode=${extra_options["git-branch"]}
 	if [[ "$git_branch_mode" == "on" ]]; then
-		while IFS= read -r session; do
-			append_git_branch "$session"
-		done <<< "$sorted"
+		format_sessions_with_git_branch "$sorted"
 	else
 		echo "$sorted"
 	fi
@@ -92,12 +73,8 @@ additional_input() {
 	fi
 }
 
-strip_git_branch() {
-	echo "$1" | sed -E 's/ .*$//'
-}
-
 handle_output() {
-	set -- "$(strip_git_branch "$*")"
+	set -- "$(strip_git_branch_info "$*")"
 	if [ -d "$*" ]; then
 		# No special handling because there isn't a window number or window name present
 		# except in unlikely and contrived situations (e.g.

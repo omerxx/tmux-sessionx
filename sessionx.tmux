@@ -75,7 +75,7 @@ handle_args() {
 
 	NEW_WINDOW="$bind_new_window:reload(find $PWD -mindepth 1 -maxdepth 1 -type d -o -type l)+change-preview($LS_COMMAND {})"
 	ZO_WINDOW="$bind_zo:reload(zoxide query -l)+change-preview($LS_COMMAND {})"
-	KILL_SESSION="$bind_kill_session:execute-silent(tmux kill-session -t \$(echo {} | sed 's/  .*//'))+reload(${SCRIPTS_DIR%/}/reload_sessions.sh)"
+	KILL_SESSION="$bind_kill_session:execute-silent(tmux kill-session -t {1})+reload(${SCRIPTS_DIR%/}/reload_sessions.sh)"
 
 	ACCEPT="$bind_accept:replace-query+print-query"
 	DELETE="$bind_delete_char:backward-delete-char"
@@ -102,6 +102,7 @@ handle_args() {
 	fi
 
 	args=(
+		--ansi
 		--bind "$TREE_MODE"
 		--bind "$CONFIGURATION_MODE"
 		--bind "$WINDOWS_MODE"
