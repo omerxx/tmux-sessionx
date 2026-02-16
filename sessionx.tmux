@@ -75,7 +75,7 @@ handle_args() {
 
 	NEW_WINDOW="$bind_new_window:reload(find $PWD -mindepth 1 -maxdepth 1 -type d -o -type l)+change-preview($LS_COMMAND {})"
 	ZO_WINDOW="$bind_zo:reload(zoxide query -l)+change-preview($LS_COMMAND {})"
-	KILL_SESSION="$bind_kill_session:execute-silent(tmux kill-session -t {})+reload(${SCRIPTS_DIR%/}/reload_sessions.sh)"
+	KILL_SESSION="$bind_kill_session:execute-silent(tmux kill-session -t \$(echo {} | sed 's/  .*//'))+reload(${SCRIPTS_DIR%/}/reload_sessions.sh)"
 
 	ACCEPT="$bind_accept:replace-query+print-query"
 	DELETE="$bind_delete_char:backward-delete-char"
@@ -159,6 +159,7 @@ handle_extra_options() {
 	extra_options["filter-current"]=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
 	extra_options["custom-paths"]=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
 	extra_options["custom-paths-subdirectories"]=$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")
+	extra_options["git-branch"]=$(tmux_option_or_fallback "@sessionx-git-branch" "off")
 	tmux set-option -g @sessionx-_built-extra-options "$(declare -p extra_options)"
 }
 

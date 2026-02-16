@@ -119,7 +119,7 @@ while getopts ":hptw" opt; do
 done
 
 shift $(($OPTIND - 1))
-SESSION="$1"
+SESSION=$(echo "$1" | sed 's/  .*//')
 
 if test "${SESSION}" == '*Last*'; then
 	SESSION=$(tmux display-message -p "#{client_last_session}")
