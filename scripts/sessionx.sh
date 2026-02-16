@@ -141,7 +141,15 @@ run_plugin() {
 
 	git_branch_mode=${extra_options["git-branch"]}
 	if [[ "$git_branch_mode" == "on" ]]; then
-		args+=(--bind "start:reload:${CURRENT_DIR}/sessions_with_branches.sh")
+		FZF_LISTEN_PORT=$((RANDOM % 10000 + 20000))
+		args+=(--listen "localhost:$FZF_LISTEN_PORT")
+		(
+			for _ in $(seq 1 20); do
+				curl -s -XPOST "localhost:$FZF_LISTEN_PORT" \
+					-d "reload(${CURRENT_DIR}/sessions_with_branches.sh)" 2>/dev/null && break
+				sleep 0.05
+			done
+		) &
 	fi
 
 	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then

@@ -44,5 +44,25 @@ if [[ -n "$custom_paths" ]]; then
 	done
 fi
 
-# Output enriched sessions with git branches
-format_sessions_with_git_branch "$sorted"
+# Pre-compute max session name length (instant, no git operations)
+max_len=0
+while IFS= read -r session; do
+	[[ -z "$session" ]] && continue
+	len=${#session}
+	(( len > max_len )) && max_len=$len
+done <<< "$sorted"
+
+# Stream each session with its branch immediately (no buffering)
+while IFS= read -r session; do
+	[[ -z "$session" ]] && continue
+	pane_path=$(tmux list-panes -t "$session" -F '#{pane_current_path}' 2>/dev/null | head -1)
+	branch=""
+	if [[ -n "$pane_path" ]]; then
+		branch=$(git -C "$pane_path" branch --show-current 2>/dev/null)
+	fi
+	if [[ -n "$branch" ]]; then
+		printf "%-${max_len}s  ${GIT_BRANCH_COLOR}${GIT_BRANCH_ICON} %s${GIT_BRANCH_RESET}\n" "$session" "$branch"
+	else
+		printf "%s\n" "$session"
+	fi
+done <<< "$sorted"
