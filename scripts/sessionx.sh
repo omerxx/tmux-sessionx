@@ -143,6 +143,7 @@ run_plugin() {
 	if [[ "$git_branch_mode" == "on" ]]; then
 		FZF_LISTEN_PORT=$((RANDOM % 10000 + 20000))
 		args+=(--listen "localhost:$FZF_LISTEN_PORT")
+		args+=(--tiebreak=begin)
 		"${CURRENT_DIR}/sessions_with_branches.sh" "$FZF_LISTEN_PORT" &
 	fi
 
