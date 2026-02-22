@@ -126,9 +126,9 @@ handle_input() {
 	bind_back=$(tmux show-option -gqv @sessionx-_bind-back)
 	git_branch_mode=$(tmux show-option -gqv @sessionx-_git-branch)
 	if [[ "$git_branch_mode" == "on" ]]; then
-		BACK="$bind_back:reload(${CURRENT_DIR}/sessions_with_branches.sh)+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+		BACK="$bind_back:reload(${CURRENT_DIR}/sessions_with_branches.sh)+change-preview(${CURRENT_DIR}/preview.sh {1})"
 	else
-		BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+		BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${CURRENT_DIR}/preview.sh {1})"
 	fi
 }
 
