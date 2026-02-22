@@ -6,6 +6,7 @@ Z_MODE="off"
 
 source "$CURRENT_DIR/tmuxinator.sh"
 source "$CURRENT_DIR/fzf-marks.sh"
+source "$CURRENT_DIR/git-branch.sh"
 
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
@@ -15,7 +16,9 @@ get_sorted_sessions() {
 	  filtered_and_piped=$(echo "$filtered_sessios" | sed -E 's/,/|/g')
 	  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
 	fi
-	echo -e "$sessions\n$last_session" | awk '!seen[$0]++'
+	local sorted
+	sorted=$(echo -e "$sessions\n$last_session" | awk '!seen[$0]++')
+	echo "$sorted"
 }
 
 tmux_option_or_fallback() {
@@ -66,6 +69,7 @@ additional_input() {
 }
 
 handle_output() {
+	set -- "$(strip_git_branch_info "$*")"
 	if [ -d "$*" ]; then
 		# No special handling because there isn't a window number or window name present
 		# except in unlikely and contrived situations (e.g.
@@ -120,7 +124,12 @@ handle_input() {
 		INPUT="$(additional_input)\n$INPUT"
 	fi
 	bind_back=${extra_options["bind-back"]}
-	BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+	git_branch_mode=${extra_options["git-branch"]}
+	if [[ "$git_branch_mode" == "on" ]]; then
+		BACK="$bind_back:reload(${CURRENT_DIR}/sessions_with_branches.sh)+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+	else
+		BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+	fi
 }
 
 run_plugin() {
@@ -129,6 +138,14 @@ run_plugin() {
 	eval $(tmux show-option -gqv @sessionx-_built-extra-options)
 	handle_input
 	args+=(--bind "$BACK")
+
+	git_branch_mode=${extra_options["git-branch"]}
+	if [[ "$git_branch_mode" == "on" ]]; then
+		FZF_LISTEN_PORT=$((RANDOM % 10000 + 20000))
+		args+=(--listen "localhost:$FZF_LISTEN_PORT")
+		args+=(--tiebreak=begin)
+		"${CURRENT_DIR}/sessions_with_branches.sh" "$FZF_LISTEN_PORT" &
+	fi
 
 	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
 		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf "${fzf_opts[@]}" "${args[@]}" | tail -n1)

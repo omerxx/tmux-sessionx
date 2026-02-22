@@ -119,7 +119,9 @@ while getopts ":hptw" opt; do
 done
 
 shift $(($OPTIND - 1))
-SESSION="$1"
+CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$CURRENT_DIR/git-branch.sh"
+SESSION=$(strip_git_branch_info "$1")
 
 if test "${SESSION}" == '*Last*'; then
 	SESSION=$(tmux display-message -p "#{client_last_session}")

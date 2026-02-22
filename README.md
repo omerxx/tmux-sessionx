@@ -205,6 +205,11 @@ set -g @sessionx-fzf-marks-mode 'off'
 # This will filter out sessions that contain 'scratch' (used by tmux-floax)
 # and 'somesession'
 set -g @sessionx-filtered-sessions 'scratch,somesession'
+
+# Display the current git branch next to each session name.
+# Branches are loaded asynchronously so session list appears instantly.
+# Requires git. (default: off)
+set -g @sessionx-git-branch 'on'
 ```
 
 ## Working with SessionX 👷
