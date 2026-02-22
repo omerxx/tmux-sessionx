@@ -136,7 +136,7 @@ handle_args() {
 	legacy=$(tmux_option_or_fallback "@sessionx-legacy-fzf-support" "off")
 	if [[ "${legacy}" == "off" ]]; then
 		args+=(--border-label "Current session: \"$CURRENT\" ")
-		args+=(--bind 'focus:transform-preview-label:echo [ {} ]')
+		args+=(--bind 'focus:transform-preview-label:echo [ {} ] | sed "s/\x1b\[[0-9;]*m//g"')
 	fi
 	auto_accept=$(tmux_option_or_fallback "@sessionx-auto-accept" "off")
 	if [[ "${auto_accept}" == "on" ]]; then
