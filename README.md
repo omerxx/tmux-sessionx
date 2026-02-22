@@ -174,6 +174,23 @@ set -g @sessionx-prompt " "
 # If you want to change the pointer
 set -g @sessionx-pointer "▶ "
 
+# Template for new session names created from directories.
+# Default is '{basename}'.
+#
+# Placeholders (path components):
+# - {basename} or {-1}: Last component.
+# - {parent} or {-2}: Second to last component.
+# - {grandparent} or {-3}: Third to last component.
+# - {N}: N-th component (0-indexed).
+# - {-N}: N-th component from end (1-indexed from end).
+#
+# Functions (operate on placeholders):
+# - {upper:PLACEHOLDER}: Uppercase result of PLACEHOLDER.
+# - {lower:PLACEHOLDER}: Lowercase result of PLACEHOLDER.
+# - {replace:PLACEHOLDER:OLD:NEW}: Replace OLD with NEW in PLACEHOLDER's result.
+# Example: set -g @sessionx-name-template '{upper:parent}-{basename}'
+set -g @sessionx-name-template '{basename}'
+
 # Customize `ls` command to display your directories nicely (default: `ls`)
 # Can be used with `exa`, `lsd`, or other command of your choice to
 # set preview window to match your preference
