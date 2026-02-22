@@ -136,7 +136,7 @@ handle_args() {
 	legacy=$(tmux_option_or_fallback "@sessionx-legacy-fzf-support" "off")
 	if [[ "${legacy}" == "off" ]]; then
 		args+=(--border-label "Current session: \"$CURRENT\" ")
-		args+=(--bind 'focus:transform-preview-label:echo [ {} ]')
+		args+=(--bind 'focus:transform-preview-label:echo [ {} ] | sed "s/\x1b\[[0-9;]*m//g"')
 	fi
 	auto_accept=$(tmux_option_or_fallback "@sessionx-auto-accept" "off")
 	if [[ "${auto_accept}" == "on" ]]; then
@@ -154,15 +154,15 @@ handle_args() {
 }
 
 handle_extra_options() {
-	declare -A extra_options
-	extra_options["bind-back"]=$bind_back
-	extra_options["filtered-sessions"]=$(tmux_option_or_fallback "@sessionx-filtered-sessions" "")
-	extra_options["window-mode"]=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
-	extra_options["filter-current"]=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
-	extra_options["custom-paths"]=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
-	extra_options["custom-paths-subdirectories"]=$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")
-	extra_options["git-branch"]=$(tmux_option_or_fallback "@sessionx-git-branch" "off")
-	tmux set-option -g @sessionx-_built-extra-options "$(declare -p extra_options)"
+	# Store each option individually to avoid bash 3.2 associative array issues on macOS
+	tmux set-option -g @sessionx-_bind-back "$bind_back"
+	tmux set-option -g @sessionx-_filtered-sessions "$(tmux_option_or_fallback "@sessionx-filtered-sessions" "")"
+	tmux set-option -g @sessionx-_window-mode "$(tmux_option_or_fallback "@sessionx-window-mode" "off")"
+	tmux set-option -g @sessionx-_filter-current "$(tmux_option_or_fallback "@sessionx-filter-current" "true")"
+	tmux set-option -g @sessionx-_custom-paths "$(tmux_option_or_fallback "@sessionx-custom-paths" "")"
+	tmux set-option -g @sessionx-_custom-paths-subdirectories "$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")"
+	tmux set-option -g @sessionx-_git-branch "$(tmux_option_or_fallback "@sessionx-git-branch" "off")"
+	tmux set-option -g @sessionx-_fzf-builtin-tmux "$FZF_BUILTIN_TMUX"
 }
 
 preview_settings
@@ -172,6 +172,7 @@ handle_args
 handle_extra_options
 
 tmux set-option -g @sessionx-_built-args "$(declare -p args)"
+tmux set-option -g @sessionx-_built-fzf-opts "$(declare -p fzf_opts)"
 
 if [ `tmux_option_or_fallback "@sessionx-prefix" "on"` = "on"  ]; then
 	tmux bind-key "$(tmux_option_or_fallback "@sessionx-bind" "O")" run-shell "$CURRENT_DIR/scripts/sessionx.sh"
