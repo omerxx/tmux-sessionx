@@ -57,8 +57,8 @@ handle_binds() {
 	bind_scroll_up=$(tmux_option_or_fallback "@sessionx-bind-scroll-up" "ctrl-u")
 	bind_scroll_down=$(tmux_option_or_fallback "@sessionx-bind-scroll-down" "ctrl-d")
 
-	bind_select_up=$(tmux_option_or_fallback "@sessionx-bind-select-up" "ctrl-n")
-	bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-p")
+	bind_select_up=$(tmux_option_or_fallback "@sessionx-bind-select-up" "ctrl-p")
+	bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-n")
 
 }
 
