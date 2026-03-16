@@ -45,27 +45,28 @@ input() {
 }
 
 additional_input() {
-	sessions=$(get_sorted_sessions)
 	custom_paths=$(tmux show-option -gqv @sessionx-_custom-paths)
 	custom_path_subdirectories=$(tmux show-option -gqv @sessionx-_custom-paths-subdirectories)
 	if [[ -z "$custom_paths" ]]; then
 		echo ""
-	else
-		clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
-		if [[ "$custom_path_subdirectories" == "true" ]]; then
-			paths=$(find ${clean_paths//,/ } -mindepth 1 -maxdepth 1 -type d)
-		else
-			paths=${clean_paths//,/ }
-		fi
-		add_path() {
-			local path=$1
-			if ! grep -q "$(basename "$path")" <<< "$sessions"; then
-				echo "$path"
-			fi
-		}
-		export -f add_path
-		printf "%s\n" "${paths//,/$IFS}" | xargs -n 1 -P 0 bash -c 'add_path "$@"' _
+		return
 	fi
+
+	sessions="${1:-$(get_sorted_sessions)}"
+	clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
+	if [[ "$custom_path_subdirectories" == "true" ]]; then
+		paths=$(find ${clean_paths//,/ } -mindepth 1 -maxdepth 1 -type d)
+	else
+		paths=${clean_paths//,/ }
+	fi
+	add_path() {
+		local path=$1
+		if ! grep -q "$(basename "$path")" <<< "$sessions"; then
+			echo "$path"
+		fi
+	}
+	export -f add_path
+	printf "%s\n" "${paths//,/$IFS}" | xargs -n 1 -P 0 bash -c 'add_path "$@"' _
 }
 
 handle_output() {
@@ -118,10 +119,22 @@ handle_output() {
 }
 
 handle_input() {
-	INPUT=$(input)
-	ADDITIONAL_INPUT=$(additional_input)
-	if [[ -n $ADDITIONAL_INPUT ]]; then
-		INPUT="$(additional_input)\n$INPUT"
+	default_window_mode=$(tmux show-option -gqv @sessionx-_window-mode)
+	if [[ "$default_window_mode" == "on" ]]; then
+		INPUT=$(tmux list-windows -a -F '#{session_name}:#{window_index} #{window_name}')
+		ADDITIONAL_INPUT=""
+	else
+		sorted_sessions=$(get_sorted_sessions)
+		filter_current_session=$(tmux show-option -gqv @sessionx-_filter-current)
+		if [[ "$filter_current_session" == "true" ]]; then
+			INPUT=$(echo "$sorted_sessions" | grep -Fxv "$CURRENT") || INPUT="$CURRENT"
+		else
+			INPUT="$sorted_sessions"
+		fi
+		ADDITIONAL_INPUT=$(additional_input "$sorted_sessions")
+		if [[ -n $ADDITIONAL_INPUT ]]; then
+			INPUT="${ADDITIONAL_INPUT}\n$INPUT"
+		fi
 	fi
 	bind_back=$(tmux show-option -gqv @sessionx-_bind-back)
 	git_branch_mode=$(tmux show-option -gqv @sessionx-_git-branch)

@@ -1,1 +1,2 @@
 {"type":"config","name":"Speed up tmux-sessionx popup render latency","metricName":"popup_launch_ms","metricUnit":"ms","bestDirection":"lower"}
+{"run":1,"commit":"b16127d","metric":460.423,"metrics":{},"status":"keep","description":"Establish baseline popup benchmark and functional checks using a real tmux popup-launch benchmark plus mocked scenario regression checks.","timestamp":1773664424412,"segment":0}
