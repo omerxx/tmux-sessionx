@@ -183,6 +183,7 @@ handle_extra_options
 
 tmux set-option -g @sessionx-_built-args "$(declare -p args)"
 tmux set-option -g @sessionx-_built-fzf-opts "$(declare -p fzf_opts)"
+tmux set-option -g @sessionx-_built-state "$(declare -p args fzf_opts bind_back filtered_sessions window_mode filter_current custom_paths custom_paths_subdirectories git_branch_mode fzf_builtin_tmux zoxide_mode)"
 
 if [ `tmux_option_or_fallback "@sessionx-prefix" "on"` = "on"  ]; then
 	tmux bind-key "$(tmux_option_or_fallback "@sessionx-bind" "O")" run-shell "$CURRENT_DIR/scripts/sessionx.sh"
