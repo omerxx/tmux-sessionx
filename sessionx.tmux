@@ -155,14 +155,24 @@ handle_args() {
 
 handle_extra_options() {
 	# Store each option individually to avoid bash 3.2 associative array issues on macOS
+	filtered_sessions="$(tmux_option_or_fallback "@sessionx-filtered-sessions" "")"
+	window_mode="$(tmux_option_or_fallback "@sessionx-window-mode" "off")"
+	filter_current="$(tmux_option_or_fallback "@sessionx-filter-current" "true")"
+	custom_paths="$(tmux_option_or_fallback "@sessionx-custom-paths" "")"
+	custom_paths_subdirectories="$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")"
+	git_branch_mode="$(tmux_option_or_fallback "@sessionx-git-branch" "off")"
+	fzf_builtin_tmux="$FZF_BUILTIN_TMUX"
+	zoxide_mode="$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")"
+
 	tmux set-option -g @sessionx-_bind-back "$bind_back"
-	tmux set-option -g @sessionx-_filtered-sessions "$(tmux_option_or_fallback "@sessionx-filtered-sessions" "")"
-	tmux set-option -g @sessionx-_window-mode "$(tmux_option_or_fallback "@sessionx-window-mode" "off")"
-	tmux set-option -g @sessionx-_filter-current "$(tmux_option_or_fallback "@sessionx-filter-current" "true")"
-	tmux set-option -g @sessionx-_custom-paths "$(tmux_option_or_fallback "@sessionx-custom-paths" "")"
-	tmux set-option -g @sessionx-_custom-paths-subdirectories "$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")"
-	tmux set-option -g @sessionx-_git-branch "$(tmux_option_or_fallback "@sessionx-git-branch" "off")"
-	tmux set-option -g @sessionx-_fzf-builtin-tmux "$FZF_BUILTIN_TMUX"
+	tmux set-option -g @sessionx-_filtered-sessions "$filtered_sessions"
+	tmux set-option -g @sessionx-_window-mode "$window_mode"
+	tmux set-option -g @sessionx-_filter-current "$filter_current"
+	tmux set-option -g @sessionx-_custom-paths "$custom_paths"
+	tmux set-option -g @sessionx-_custom-paths-subdirectories "$custom_paths_subdirectories"
+	tmux set-option -g @sessionx-_git-branch "$git_branch_mode"
+	tmux set-option -g @sessionx-_fzf-builtin-tmux "$fzf_builtin_tmux"
+	tmux set-option -g @sessionx-_built-runtime "$(declare -p bind_back filtered_sessions window_mode filter_current custom_paths custom_paths_subdirectories git_branch_mode fzf_builtin_tmux zoxide_mode)"
 }
 
 preview_settings
