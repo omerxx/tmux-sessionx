@@ -1,0 +1,1 @@
+{"type":"config","name":"Speed up tmux-sessionx popup render latency","metricName":"popup_launch_ms","metricUnit":"ms","bestDirection":"lower"}
