@@ -1,0 +1,2 @@
+- Consider a carefully gated migration from `fzf-tmux` to `fzf --tmux` when both tmux and fzf support popup mode, but only after proving parity for popup sizing, stdin handling, and edge cases like zoomed panes and older shells.
+- Investigate a pure-Bash `get_sorted_sessions` path that preserves the current filtering semantics exactly while removing the remaining `grep`/`sed` process overhead from popup launch.

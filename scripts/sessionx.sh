@@ -1,22 +1,30 @@
 #!/usr/bin/env bash
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CURRENT="$(tmux display-message -p '#S')"
+CURRENT=""
+LAST_SESSION=""
 Z_MODE="off"
 
 source "$CURRENT_DIR/tmuxinator.sh"
 source "$CURRENT_DIR/fzf-marks.sh"
 source "$CURRENT_DIR/git-branch.sh"
 
+refresh_client_session_state() {
+	if [[ -n "$CURRENT" && -n "${LAST_SESSION+x}" ]]; then
+		return
+	fi
+	IFS=$'\t' read -r CURRENT LAST_SESSION <<< "$(tmux display-message -p '#S	#{client_last_session}')"
+}
+
 get_sorted_sessions() {
-	last_session=$(tmux display-message -p '#{client_last_session}')
-	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -Fxv "$last_session")
+	refresh_client_session_state
+	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -Fxv "$LAST_SESSION")
 	if [[ -n "$filtered_sessions" ]]; then
 	  filtered_and_piped=$(echo "$filtered_sessions" | sed -E 's/,/|/g')
 	  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
 	fi
 	local sorted
-	sorted=$(echo -e "$sessions\n$last_session" | awk '!seen[$0]++')
+	sorted=$(echo -e "$sessions\n$LAST_SESSION" | awk '!seen[$0]++')
 	echo "$sorted"
 }
 

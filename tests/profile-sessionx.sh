@@ -96,6 +96,9 @@ case "$command_name" in
       '#{client_last_session}')
         printf 'alpha\n'
         ;;
+      '#S\t#{client_last_session}')
+        printf 'work\talpha\n'
+        ;;
       *)
         printf '\n'
         ;;
