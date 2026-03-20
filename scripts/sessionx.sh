@@ -74,6 +74,45 @@ additional_input() {
 	printf "%s\n" "${paths//,/$IFS}" | xargs -n 1 -P 0 bash -c 'add_path "$@"' _
 }
 
+popup_fzf() {
+	local width="$1"
+	local height="$2"
+	shift 2 || true
+	local -a original_args=("$@")
+	local tmpdir input_file output_file status_file popup_script popup_command popup_status
+	local quoted_fzf_args quoted_path
+
+	tmpdir=$(mktemp -d "${TMPDIR:-/tmp}/sessionx-popup-XXXXXX")
+	input_file="$tmpdir/input"
+	output_file="$tmpdir/output"
+	status_file="$tmpdir/status"
+	popup_script="$tmpdir/popup.sh"
+
+	cleanup_popup_fzf() {
+		rm -rf "$tmpdir"
+	}
+	trap cleanup_popup_fzf RETURN
+
+	cat > "$input_file"
+	quoted_fzf_args=$(printf '%q ' "${original_args[@]}")
+	quoted_path=$(printf '%q' "$PATH")
+	cat > "$popup_script" <<EOF
+#!/usr/bin/env bash
+set -uo pipefail
+export PATH=$quoted_path
+fzf $quoted_fzf_args --no-height --bind=ctrl-z:ignore --no-tmux < "$input_file" > "$output_file"
+printf '%s\n' "\$?" > "$status_file"
+EOF
+	chmod +x "$popup_script"
+
+	if tmux popup -d "$PWD" -E -w"$width" -h"$height" "bash $(printf '%q' "$popup_script")" >/dev/null 2>&1 && [[ -f "$status_file" ]]; then
+		cat "$output_file"
+		return "$(cat "$status_file" 2>/dev/null || echo 1)"
+	fi
+
+	cat "$input_file" | fzf-tmux -p "$width,$height" "${original_args[@]}"
+}
+
 handle_output() {
 	set -- "$(strip_git_branch_info "$*")"
 	if [ -d "$*" ]; then
@@ -162,7 +201,7 @@ run_plugin() {
 	if [[ "$fzf_builtin_tmux" == "on" ]]; then
 		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	else
-		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | "${CURRENT_DIR}/popup-fzf.sh" "$popup_width" "$popup_height" "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | popup_fzf "$popup_width" "$popup_height" "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	fi
 }
 
