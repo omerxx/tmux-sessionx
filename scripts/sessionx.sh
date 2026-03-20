@@ -162,7 +162,7 @@ run_plugin() {
 	if [[ "$fzf_builtin_tmux" == "on" ]]; then
 		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	else
-		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf-tmux "${fzf_opts[@]}" "${args[@]}" | tail -n1)
+		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | "${CURRENT_DIR}/popup-fzf.sh" "$popup_width" "$popup_height" "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	fi
 }
 

@@ -162,6 +162,8 @@ handle_extra_options() {
 	custom_paths_subdirectories="$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")"
 	git_branch_mode="$(tmux_option_or_fallback "@sessionx-git-branch" "off")"
 	fzf_builtin_tmux="$FZF_BUILTIN_TMUX"
+	popup_width="$window_width"
+	popup_height="$window_height"
 	zoxide_mode="$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")"
 
 	tmux set-option -g @sessionx-_bind-back "$bind_back"
@@ -172,7 +174,7 @@ handle_extra_options() {
 	tmux set-option -g @sessionx-_custom-paths-subdirectories "$custom_paths_subdirectories"
 	tmux set-option -g @sessionx-_git-branch "$git_branch_mode"
 	tmux set-option -g @sessionx-_fzf-builtin-tmux "$fzf_builtin_tmux"
-	tmux set-option -g @sessionx-_built-runtime "$(declare -p bind_back filtered_sessions window_mode filter_current custom_paths custom_paths_subdirectories git_branch_mode fzf_builtin_tmux zoxide_mode)"
+	tmux set-option -g @sessionx-_built-runtime "$(declare -p bind_back filtered_sessions window_mode filter_current custom_paths custom_paths_subdirectories git_branch_mode fzf_builtin_tmux popup_width popup_height zoxide_mode)"
 }
 
 preview_settings
@@ -183,7 +185,7 @@ handle_extra_options
 
 tmux set-option -g @sessionx-_built-args "$(declare -p args)"
 tmux set-option -g @sessionx-_built-fzf-opts "$(declare -p fzf_opts)"
-tmux set-option -g @sessionx-_built-state "$(declare -p args fzf_opts bind_back filtered_sessions window_mode filter_current custom_paths custom_paths_subdirectories git_branch_mode fzf_builtin_tmux zoxide_mode)"
+tmux set-option -g @sessionx-_built-state "$(declare -p args fzf_opts bind_back filtered_sessions window_mode filter_current custom_paths custom_paths_subdirectories git_branch_mode fzf_builtin_tmux popup_width popup_height zoxide_mode)"
 
 if [ `tmux_option_or_fallback "@sessionx-prefix" "on"` = "on"  ]; then
 	tmux bind-key "$(tmux_option_or_fallback "@sessionx-bind" "O")" run-shell "$CURRENT_DIR/scripts/sessionx.sh"
