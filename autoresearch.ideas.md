@@ -1,0 +1,2 @@
+- The remaining gap now looks dominated by cold-start and process-launch overhead rather than obvious shell hot-path waste. Measure how much of the remaining time is in tmux `run-shell` + Bash startup versus SessionX logic before attempting more code changes.
+- If chasing materially lower latency from here, focus on architecture-level reductions in process boundaries on the launch path while preserving behavior and harness parity, because most small shell-level substitutions have regressed and the successful wins came from eliminating whole helper/process layers.
