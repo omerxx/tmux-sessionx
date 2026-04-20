@@ -22,8 +22,7 @@
         packages.default = pkgs.tmuxPlugins.mkTmuxPlugin {
           pluginName = "sessionx";
           version = "dev";
-
-          src = ./.;
+          src = builtins.path { path = ./.; name = "source"; };
           nativeBuildInputs = [pkgs.makeWrapper];
 
           postPatch = ''
