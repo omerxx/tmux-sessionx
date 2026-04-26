@@ -87,9 +87,13 @@ handle_args() {
 	SCROLL_UP="$bind_scroll_up:preview-half-page-up"
 	SCROLL_DOWN="$bind_scroll_down:preview-half-page-down"
 
-	RENAME_SESSION_EXEC='bash -c '\'' printf >&2 "New name: ";read name; tmux rename-session -t {1} "${name}"; '\'''
+	RENAME_SESSION_EXEC="${SCRIPTS_DIR%/}/rename_session.sh {}"
+
 	RENAME_SESSION_RELOAD='bash -c '\'' tmux list-sessions | sed -E "s/:.*$//"; '\'''
-	RENAME_SESSION="$bind_rename_session:execute($RENAME_SESSION_EXEC)+reload($RENAME_SESSION_RELOAD)"
+	RENAME_SESSION_LABEL='bash -c '\'' printf "Current session: \"%s\" " "$(tmux display-message -p "#S")" '\'''
+
+	RENAME_SESSION_PREVIEW_LABEL='bash -c '\'' name=$(tmux show-option -gqv @sessionx-_current-name); printf "[ %s ]" "$name" '\'''
+	RENAME_SESSION="$bind_rename_session:execute($RENAME_SESSION_EXEC)+reload($RENAME_SESSION_RELOAD)+transform-border-label($RENAME_SESSION_LABEL)+transform-preview-label($RENAME_SESSION_PREVIEW_LABEL)"
 
 	HEADER="$bind_accept=󰿄  $bind_kill_session=󱂧  $bind_rename_session=󰑕  $bind_configuration_mode=󱃖  $bind_window_mode=   $bind_new_window=󰇘  $bind_back=󰌍  $bind_tree_mode=󰐆   $bind_scroll_up=  $bind_scroll_down= / $bind_zo="
 	if is_fzf-marks_enabled; then
@@ -174,7 +178,7 @@ handle_extra_options
 tmux set-option -g @sessionx-_built-args "$(declare -p args)"
 tmux set-option -g @sessionx-_built-fzf-opts "$(declare -p fzf_opts)"
 
-if [ `tmux_option_or_fallback "@sessionx-prefix" "on"` = "on"  ]; then
+if [ $(tmux_option_or_fallback "@sessionx-prefix" "on") = "on" ]; then
 	tmux bind-key "$(tmux_option_or_fallback "@sessionx-bind" "O")" run-shell "$CURRENT_DIR/scripts/sessionx.sh"
 else
 	tmux bind-key -n "$(tmux_option_or_fallback "@sessionx-bind" "O")" run-shell "$CURRENT_DIR/scripts/sessionx.sh"
