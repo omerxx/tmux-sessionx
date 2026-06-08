@@ -47,5 +47,5 @@ format_sessions_with_git_branch() {
 strip_git_branch_info() {
 	local ESC
 	ESC=$(printf '\033')
-	echo "$1" | sed "s/${ESC}\[[0-9;]*m//g" | sed "s/[[:space:]]* .*//" | sed 's/[[:space:]]*$//'
+	echo "$1" | sed "s/${ESC}\[[0-9;]*m//g" | sed -E "s/[[:space:]]{2,}.*$//" | sed 's/[[:space:]]*$//'
 }
