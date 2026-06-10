@@ -6,16 +6,19 @@ Z_MODE="off"
 
 source "$CURRENT_DIR/tmuxinator.sh"
 source "$CURRENT_DIR/fzf-marks.sh"
+source "$CURRENT_DIR/git-branch.sh"
 
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -Fxv "$last_session")
-	filtered_sessios=${extra_options["filtered-sessions"]}
-	if [[ -n "$filtered_sessios" ]]; then
-	  filtered_and_piped=$(echo "$filtered_sessios" | sed -E 's/,/|/g')
+	filtered_sessions=$(tmux show-option -gqv @sessionx-_filtered-sessions)
+	if [[ -n "$filtered_sessions" ]]; then
+	  filtered_and_piped=$(echo "$filtered_sessions" | sed -E 's/,/|/g')
 	  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
 	fi
-	echo -e "$sessions\n$last_session" | awk '!seen[$0]++'
+	local sorted
+	sorted=$(echo -e "$sessions\n$last_session" | awk '!seen[$0]++')
+	echo "$sorted"
 }
 
 tmux_option_or_fallback() {
@@ -28,11 +31,11 @@ tmux_option_or_fallback() {
 }
 
 input() {
-	default_window_mode=${extra_options["window-mode"]}
+	default_window_mode=$(tmux show-option -gqv @sessionx-_window-mode)
 	if [[ "$default_window_mode" == "on" ]]; then
 		tmux list-windows -a -F '#{session_name}:#{window_index} #{window_name}'
 	else
-		filter_current_session=${extra_options["filter-current"]}
+		filter_current_session=$(tmux show-option -gqv @sessionx-_filter-current)
 		if [[ "$filter_current_session" == "true" ]]; then
 			(get_sorted_sessions | grep -Fxv "$CURRENT") || echo "$CURRENT"
 		else
@@ -43,9 +46,10 @@ input() {
 
 additional_input() {
 	sessions=$(get_sorted_sessions)
-	custom_paths=${extra_options["custom-paths"]}
-	custom_path_subdirectories=${extra_options["custom-paths-subdirectories"]}
-	custom_path_max_depth=${extra_options["custom-paths-max-depth"]}
+	custom_paths=$(tmux show-option -gqv @sessionx-_custom-paths)
+	custom_path_subdirectories=$(tmux show-option -gqv @sessionx-_custom-paths-subdirectories)
+	custom_path_max_depth=$(tmux show-option -gqv @sessionx-_custom-paths-max-depth)
+
 	if [[ -z "$custom_paths" ]]; then
 		echo ""
 	else
@@ -67,6 +71,7 @@ additional_input() {
 }
 
 handle_output() {
+	set -- "$(strip_git_branch_info "$*")"
 	if [ -d "$*" ]; then
 		# No special handling because there isn't a window number or window name present
 		# except in unlikely and contrived situations (e.g.
@@ -120,17 +125,31 @@ handle_input() {
 	if [[ -n $ADDITIONAL_INPUT ]]; then
 		INPUT="$(additional_input)\n$INPUT"
 	fi
-	bind_back=${extra_options["bind-back"]}
-	BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${TMUX_PLUGIN_MANAGER_PATH%/}/tmux-sessionx/scripts/preview.sh {1})"
+	bind_back=$(tmux show-option -gqv @sessionx-_bind-back)
+	git_branch_mode=$(tmux show-option -gqv @sessionx-_git-branch)
+	if [[ "$git_branch_mode" == "on" ]]; then
+		BACK="$bind_back:reload(${CURRENT_DIR}/sessions_with_branches.sh)+change-preview(${CURRENT_DIR}/preview.sh {1})"
+	else
+		BACK="$bind_back:reload(echo -e \"${INPUT// /}\")+change-preview(${CURRENT_DIR}/preview.sh {1})"
+	fi
 }
 
 run_plugin() {
 	Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
 	eval $(tmux show-option -gqv @sessionx-_built-args)
-	eval $(tmux show-option -gqv @sessionx-_built-extra-options)
+	eval $(tmux show-option -gqv @sessionx-_built-fzf-opts)
 	handle_input
 	args+=(--bind "$BACK")
 
+	git_branch_mode=$(tmux show-option -gqv @sessionx-_git-branch)
+	if [[ "$git_branch_mode" == "on" ]]; then
+		FZF_LISTEN_PORT=$((RANDOM % 10000 + 20000))
+		args+=(--listen "localhost:$FZF_LISTEN_PORT")
+		args+=(--tiebreak=begin)
+		"${CURRENT_DIR}/sessions_with_branches.sh" "$FZF_LISTEN_PORT" &
+	fi
+
+	FZF_BUILTIN_TMUX=$(tmux show-option -gqv @sessionx-_fzf-builtin-tmux)
 	if [[ "$FZF_BUILTIN_TMUX" == "on" ]]; then
 		RESULT=$(echo -e "${INPUT}" | sed -E 's/✗/ /g' | fzf "${fzf_opts[@]}" "${args[@]}" | tail -n1)
 	else

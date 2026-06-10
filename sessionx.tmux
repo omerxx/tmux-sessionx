@@ -2,6 +2,7 @@
 
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPTS_DIR="$CURRENT_DIR/scripts"
+CURRENT="$(tmux display-message -p '#S')"
 
 source "$SCRIPTS_DIR/tmuxinator.sh"
 source "$SCRIPTS_DIR/fzf-marks.sh"
@@ -56,8 +57,8 @@ handle_binds() {
 	bind_scroll_up=$(tmux_option_or_fallback "@sessionx-bind-scroll-up" "ctrl-u")
 	bind_scroll_down=$(tmux_option_or_fallback "@sessionx-bind-scroll-down" "ctrl-d")
 
-	bind_select_up=$(tmux_option_or_fallback "@sessionx-bind-select-up" "ctrl-n")
-	bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-p")
+	bind_select_up=$(tmux_option_or_fallback "@sessionx-bind-select-up" "ctrl-p")
+	bind_select_down=$(tmux_option_or_fallback "@sessionx-bind-select-down" "ctrl-n")
 
 }
 
@@ -70,12 +71,12 @@ handle_args() {
 	FZF_BUILTIN_TMUX=$(tmux_option_or_fallback "@sessionx-fzf-builtin-tmux" "off")
 
 	TREE_MODE="$bind_tree_mode:change-preview(${SCRIPTS_DIR%/}/preview.sh -t {1})"
-	CONFIGURATION_MODE="$bind_configuration_mode:reload(find $CONFIGURATION_PATH -mindepth 1 -maxdepth 1 -type d -o -type l)+change-preview($LS_COMMAND {})"
-	WINDOWS_MODE="$bind_window_mode:reload(tmux list-windows -a -F '#{session_name}:#{window_name}')+change-preview(${SCRIPTS_DIR%/}/preview.sh -w {1})"
+	CONFIGURATION_MODE="$bind_configuration_mode:reload(find -L $CONFIGURATION_PATH -mindepth 1 -maxdepth 1 -type d -o -type l)+change-preview($LS_COMMAND {})"
+	WINDOWS_MODE="$bind_window_mode:reload(tmux list-windows -a -F '#{session_name}:#{window_index} #{window_name}')+change-preview(${SCRIPTS_DIR%/}/preview.sh -w {1})"
 
-	NEW_WINDOW="$bind_new_window:reload(find $PWD -mindepth 1 -maxdepth 1 -type d -o -type l)+change-preview($LS_COMMAND {})"
+	NEW_WINDOW="$bind_new_window:reload(find -L $PWD -mindepth 1 -maxdepth 1 -type d -o -type l)+change-preview($LS_COMMAND {})"
 	ZO_WINDOW="$bind_zo:reload(zoxide query -l)+change-preview($LS_COMMAND {})"
-	KILL_SESSION="$bind_kill_session:execute-silent(tmux kill-session -t {})+reload(${SCRIPTS_DIR%/}/reload_sessions.sh)"
+	KILL_SESSION="$bind_kill_session:execute-silent(tmux kill-session -t {1})+reload(${SCRIPTS_DIR%/}/reload_sessions.sh)"
 
 	ACCEPT="$bind_accept:replace-query+print-query"
 	DELETE="$bind_delete_char:backward-delete-char"
@@ -102,6 +103,7 @@ handle_args() {
 	fi
 
 	args=(
+		--ansi
 		--bind "$TREE_MODE"
 		--bind "$CONFIGURATION_MODE"
 		--bind "$WINDOWS_MODE"
@@ -134,7 +136,7 @@ handle_args() {
 	legacy=$(tmux_option_or_fallback "@sessionx-legacy-fzf-support" "off")
 	if [[ "${legacy}" == "off" ]]; then
 		args+=(--border-label "Current session: \"$CURRENT\" ")
-		args+=(--bind 'focus:transform-preview-label:echo [ {} ]')
+		args+=(--bind 'focus:transform-preview-label:echo [ {} ] | sed "s/\x1b\[[0-9;]*m//g"')
 	fi
 	auto_accept=$(tmux_option_or_fallback "@sessionx-auto-accept" "off")
 	if [[ "${auto_accept}" == "on" ]]; then
@@ -152,15 +154,16 @@ handle_args() {
 }
 
 handle_extra_options() {
-	declare -A extra_options
-	extra_options["bind-back"]=$bind_back
-	extra_options["filtered-sessions"]=$(tmux_option_or_fallback "@sessionx-filtered-sessions" "")
-	extra_options["window-mode"]=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
-	extra_options["filter-current"]=$(tmux_option_or_fallback "@sessionx-filter-current" "true")
-	extra_options["custom-paths"]=$(tmux_option_or_fallback "@sessionx-custom-paths" "")
-	extra_options["custom-paths-subdirectories"]=$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")
-	extra_options["custom-paths-max-depth"]=$(tmux_option_or_fallback "@sessionx-custom-paths-max-depth" "1")
-	tmux set-option -g @sessionx-_built-extra-options "$(declare -p extra_options)"
+	# Store each option individually to avoid bash 3.2 associative array issues on macOS
+	tmux set-option -g @sessionx-_bind-back "$bind_back"
+	tmux set-option -g @sessionx-_filtered-sessions "$(tmux_option_or_fallback "@sessionx-filtered-sessions" "")"
+	tmux set-option -g @sessionx-_window-mode "$(tmux_option_or_fallback "@sessionx-window-mode" "off")"
+	tmux set-option -g @sessionx-_filter-current "$(tmux_option_or_fallback "@sessionx-filter-current" "true")"
+	tmux set-option -g @sessionx-_custom-paths "$(tmux_option_or_fallback "@sessionx-custom-paths" "")"
+	tmux set-option -g @sessionx-_custom-paths-subdirectories "$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")"
+	tmux set-option -g @sessionx-_custom-paths-max-depth "$(tmux_option_or_fallback "@sessionx-custom-paths-max-depth" "1")"
+	tmux set-option -g @sessionx-_git-branch "$(tmux_option_or_fallback "@sessionx-git-branch" "off")"
+	tmux set-option -g @sessionx-_fzf-builtin-tmux "$FZF_BUILTIN_TMUX"
 }
 
 preview_settings
@@ -170,6 +173,7 @@ handle_args
 handle_extra_options
 
 tmux set-option -g @sessionx-_built-args "$(declare -p args)"
+tmux set-option -g @sessionx-_built-fzf-opts "$(declare -p fzf_opts)"
 
 if [ `tmux_option_or_fallback "@sessionx-prefix" "on"` = "on"  ]; then
 	tmux bind-key "$(tmux_option_or_fallback "@sessionx-bind" "O")" run-shell "$CURRENT_DIR/scripts/sessionx.sh"
