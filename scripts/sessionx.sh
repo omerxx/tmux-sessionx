@@ -106,7 +106,7 @@ handle_output() {
 		else
 			if [[ "$Z_MODE" == "on" ]]; then
 				z_target=$(zoxide query "$target")
-				tmux new-session -ds "$target" -c "$z_target" -n "$z_target"
+				tmux new-session -ds "$target" -c "$z_target" -n "$(basename "$z_target")"
 			else
 				tmux new-session -ds "$target"
 			fi
