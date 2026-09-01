@@ -5,6 +5,7 @@ GIT_BRANCH_RESET=$'\033[0m'
 GIT_BRANCH_ICON=""
 GIT_TAG_ICON=""
 
+# Format session names with their git branch or tag information.
 format_sessions_with_git_branch() {
 	local sessions="$1"
 	local -a session_list=()
@@ -44,6 +45,7 @@ format_sessions_with_git_branch() {
 	done
 }
 
+# Strip ANSI colors and git branch/tag suffix from a session name string.
 strip_git_branch_info() {
 	local ESC
 	ESC=$(printf '\033')

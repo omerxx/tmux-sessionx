@@ -7,6 +7,7 @@ CURRENT="$(tmux display-message -p '#S')"
 source "$SCRIPTS_DIR/tmuxinator.sh"
 source "$SCRIPTS_DIR/fzf-marks.sh"
 
+# Get tmux option value or return fallback if not set.
 tmux_option_or_fallback() {
 	local option_value
 	option_value="$(tmux show-option -gqv "$1")"
@@ -16,6 +17,7 @@ tmux_option_or_fallback() {
 	echo "$option_value"
 }
 
+# Configure preview-related settings from tmux options.
 preview_settings() {
 	default_window_mode=$(tmux_option_or_fallback "@sessionx-window-mode" "off")
 	if [[ "$default_window_mode" == "on" ]]; then
@@ -30,6 +32,7 @@ preview_settings() {
 	preview_enabled=$(tmux_option_or_fallback "@sessionx-preview-enabled" "true")
 }
 
+# Configure window appearance settings from tmux options.
 window_settings() {
 	window_height=$(tmux_option_or_fallback "@sessionx-window-height" "75%")
 	window_width=$(tmux_option_or_fallback "@sessionx-window-width" "75%")
@@ -38,6 +41,7 @@ window_settings() {
 	pointer_icon=$(tmux_option_or_fallback "@sessionx-pointer" "▶")
 }
 
+# Configure all keybindings from tmux options.
 handle_binds() {
 	bind_tree_mode=$(tmux_option_or_fallback "@sessionx-bind-tree-mode" "ctrl-t")
 	bind_window_mode=$(tmux_option_or_fallback "@sessionx-bind-window-mode" "ctrl-w")
@@ -62,6 +66,7 @@ handle_binds() {
 
 }
 
+# Build fzf arguments and command bindings from configuration.
 handle_args() {
 	LS_COMMAND=$(tmux_option_or_fallback "@sessionx-ls-command" "ls")
 	if [[ "$preview_enabled" == "true" ]]; then
@@ -153,6 +158,7 @@ handle_args() {
 	eval "fzf_opts=($additional_fzf_options)"
 }
 
+# Store extra configuration options in tmux for use by the plugin script.
 handle_extra_options() {
 	# Store each option individually to avoid bash 3.2 associative array issues on macOS
 	tmux set-option -g @sessionx-_bind-back "$bind_back"

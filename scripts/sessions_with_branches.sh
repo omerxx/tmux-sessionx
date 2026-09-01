@@ -71,6 +71,7 @@ else
 
 	TMPBASE="/tmp/sessionx-branches-$$"
 
+	# Output the current state of all sessions with resolved git references.
 	output_current_state() {
 		[[ -n "$custom_prefix" ]] && printf "%s" "$custom_prefix"
 		for ((j=0; j<${#session_list[@]}; j++)); do
