@@ -13,8 +13,8 @@ get_sorted_sessions() {
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -Fxv "$last_session")
 	filtered_sessions=$(tmux show-option -gqv @sessionx-_filtered-sessions)
 	if [[ -n "$filtered_sessions" ]]; then
-	  filtered_and_piped=$(echo "$filtered_sessions" | sed -E 's/,/|/g')
-	  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
+		filtered_and_piped=$(echo "$filtered_sessions" | sed -E 's/,/|/g')
+		sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
 	fi
 	local sorted
 	sorted=$(echo -e "$sessions\n$last_session" | awk '!seen[$0]++')
@@ -59,7 +59,7 @@ additional_input() {
 		fi
 		add_path() {
 			local path=$1
-			if ! grep -q "$(basename "$path")" <<< "$sessions"; then
+			if ! grep -q "$(basename "$path")" <<<"$sessions"; then
 				echo "$path"
 			fi
 		}
@@ -75,7 +75,7 @@ handle_output() {
 		# except in unlikely and contrived situations (e.g.
 		# "/home/person/projects:0\ bash" could be a path on your filesystem.)
 		target=$(echo "$@" | tr -d '\n')
-	elif is_fzf-marks_mark "$@" ; then
+	elif is_fzf-marks_mark "$@"; then
 		# Needs to run before session name mode
 		mark=$(get_fzf-marks_mark "$@")
 		target=$(get_fzf-marks_target "$@")
@@ -95,7 +95,7 @@ handle_output() {
 
 	if ! tmux has-session -t="$target" 2>/dev/null; then
 		if is_tmuxinator_enabled && is_tmuxinator_template "$target"; then
-			tmuxinator start "$target"
+			tmuxinator start "$target" "$(tmux show-option -gqv @sessionx-tmuxinator-args)"
 		elif test -n "$mark"; then
 			tmux new-session -ds "$mark" -c "$target"
 			target="$mark"

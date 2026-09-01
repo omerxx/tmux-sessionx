@@ -72,7 +72,6 @@ You may find that Nixpkgs does not have the latest updates of this plugin, this 
 #### In your flake.nix inputs
 
 ```nix
-
 inputs.tmux-sessionx.url = "github:omerxx/tmux-sessionx";
 
 # ...
@@ -91,7 +90,6 @@ nixosConfigurations."system-name" = nixpkgs.lib.nixosSystem {
 #### In your tmux.nix configuration or anywhere else in your configuration
 
 ```nix
-
 programs.tmux.plugins = [
   {
     # Need to change <system> to your aarch or use ${pkgs.system} to interpolate aarch
@@ -196,6 +194,10 @@ set -g @sessionx-legacy-fzf-support 'on'
 # and look for a tmuxinator project with that name.
 # If found, it'll launch the template using tmuxinator
 set -g @sessionx-tmuxinator-mode 'off'
+
+# Append args to `tmuxinator start` command
+# Can be used for example to pass `--suppress-tmux-version-warning` or other args to tmuxinator
+set -g @sessionx-tmuxinator-args ''
 
 # Turn on fzf-marks (default: off) mode to launch a new session from your marks
 set -g @sessionx-fzf-marks-mode 'off'
