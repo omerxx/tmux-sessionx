@@ -5,6 +5,7 @@
 #   https://stackoverflow.com/a/55247572/197789
 #   https://github.com/petobens/dotfiles/blob/master/tmux/tmux_tree
 
+# Display preview for a single session or directory.
 single_mode() {
   # check if it's a custom directory
   if test -d "${1}"; then
@@ -27,6 +28,7 @@ single_mode() {
 	display_session "${session_name}"
 }
 
+# Get tmux option value or return fallback if not set.
 tmux_option_or_fallback() {
 	local option_value
 	option_value="$(tmux show-option -gqv "$1")"
@@ -53,6 +55,7 @@ display_session() {
 	tmux capture-pane -ep -t "${session_id}"
 }
 
+# Display preview for a specific window.
 window_mode() {
 	args=($1)
 	tmux capture-pane -ep -t "${args[0]}"

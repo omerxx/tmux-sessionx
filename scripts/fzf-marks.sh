@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Check if fzf-marks integration is enabled.
 is_fzf-marks_enabled() {
   local fzf_marks_mode fzf_marks_file
   fzf_marks_file=$(get_fzf-marks_file)
@@ -14,6 +15,7 @@ is_fzf-marks_enabled() {
   return 0
 }
 
+# Check if a string is formatted as an fzf-marks entry (contains ' : ').
 is_fzf-marks_mark(){
   if $(echo "$@" | grep -q ' : '  2>&1); then
     return 0
@@ -22,28 +24,33 @@ is_fzf-marks_mark(){
   return 1
 }
 
+# Get the path to the fzf-marks file.
 get_fzf-marks_file() {
   echo "$(tmux_option_or_fallback "@sessionx-fzf-marks-file" "$HOME/.fzf-marks" | sed "s|~|$HOME|")"
 }
 
+# Extract the mark name from an fzf-marks entry.
 get_fzf-marks_mark() {
   local mark
   mark=$(echo "$@" | cut -d: -f1 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
   echo "$mark"
 }
 
+# Extract the target path from an fzf-marks entry.
 get_fzf-marks_target() {
   local target
   target=$(echo "$@" | cut -d: -f2 | sed 's/^[[:space:]]*//' | sed 's/[[:space:]]*$//')
   echo "$target"
 }
 
+# Get the configured keybind for fzf-marks.
 get_fzf-marks_keybind() {
   local keybind
   keybind="$(tmux_option_or_fallback "@sessionx-bind-fzf-marks" "ctrl-g")"
   echo "$keybind"
 }
 
+# Generate the fzf keybind configuration for fzf-marks.
 load_fzf-marks_binding(){
   echo "$(get_fzf-marks_keybind):reload(cat $(get_fzf-marks_file))+change-preview(sed 's/.*: \(.*\)$/\1/' <<< {} | xargs $(tmux_option_or_fallback "@sessionx-ls-command" "ls"))"
 }
