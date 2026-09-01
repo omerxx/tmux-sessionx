@@ -8,6 +8,7 @@ source "$CURRENT_DIR/tmuxinator.sh"
 source "$CURRENT_DIR/fzf-marks.sh"
 source "$CURRENT_DIR/git-branch.sh"
 
+# Get sorted list of tmux sessions with last session at the end, excluding filtered sessions.
 get_sorted_sessions() {
 	last_session=$(tmux display-message -p '#{client_last_session}')
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -Fxv "$last_session")
@@ -21,6 +22,7 @@ get_sorted_sessions() {
 	echo "$sorted"
 }
 
+# Get tmux option value or return fallback if not set.
 tmux_option_or_fallback() {
 	local option_value
 	option_value="$(tmux show-option -gqv "$1")"
@@ -30,6 +32,7 @@ tmux_option_or_fallback() {
 	echo "$option_value"
 }
 
+# Generate input list for fzf (either windows or sessions based on mode).
 input() {
 	default_window_mode=$(tmux show-option -gqv @sessionx-_window-mode)
 	if [[ "$default_window_mode" == "on" ]]; then
@@ -44,6 +47,7 @@ input() {
 	fi
 }
 
+# Generate additional custom paths to include in fzf input.
 additional_input() {
 	sessions=$(get_sorted_sessions)
 	custom_paths=$(tmux show-option -gqv @sessionx-_custom-paths)
@@ -68,6 +72,7 @@ additional_input() {
 	fi
 }
 
+# Process fzf selection and switch to or create the target session/window.
 handle_output() {
 	set -- "$(strip_git_branch_info "$*")"
 	if [ -d "$*" ]; then
@@ -117,6 +122,7 @@ handle_output() {
 	exit 0
 }
 
+# Prepare input data and configure the back-key binding for fzf.
 handle_input() {
 	INPUT=$(input)
 	ADDITIONAL_INPUT=$(additional_input)
@@ -132,6 +138,7 @@ handle_input() {
 	fi
 }
 
+# Run the sessionx plugin with configured options and invoke fzf.
 run_plugin() {
 	Z_MODE=$(tmux_option_or_fallback "@sessionx-zoxide-mode" "off")
 	eval $(tmux show-option -gqv @sessionx-_built-args)
