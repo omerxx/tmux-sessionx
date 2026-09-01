@@ -9,9 +9,23 @@ source "$CURRENT_DIR/fzf-marks.sh"
 source "$CURRENT_DIR/git-branch.sh"
 
 get_sorted_sessions() {
+	filtered_sessions=$(tmux show-option -gqv @sessionx-_filtered-sessions)
+
+	if [[ "$(tmux_option_or_fallback "@sessionx-sort" "default")" == "attached" ]]; then
+		# Order every session by when it was last attached (most recent last).
+		# Sort numerically on the leading timestamp, then strip it; keeps session
+		# names with spaces intact without depending on a fixed field delimiter.
+		sessions=$(tmux list-sessions -F '#{session_last_attached} #{session_name}' | sort -n | sed 's/^[0-9]* //')
+		if [[ -n "$filtered_sessions" ]]; then
+		  filtered_and_piped=$(echo "$filtered_sessions" | sed -E 's/,/|/g')
+		  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")
+		fi
+		echo "$sessions"
+		return
+	fi
+
 	last_session=$(tmux display-message -p '#{client_last_session}')
 	sessions=$(tmux list-sessions | sed -E 's/:.*$//' | grep -Fxv "$last_session")
-	filtered_sessions=$(tmux show-option -gqv @sessionx-_filtered-sessions)
 	if [[ -n "$filtered_sessions" ]]; then
 	  filtered_and_piped=$(echo "$filtered_sessions" | sed -E 's/,/|/g')
 	  sessions=$(echo "$sessions" | grep -Ev "$filtered_and_piped")

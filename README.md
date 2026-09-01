@@ -183,6 +183,11 @@ set -g @sessionx-ls-command 'lsd --tree --color=always --icon=always'
 # Requires zoxide installed
 set -g @sessionx-zoxide-mode 'on'
 
+# Session ordering. 'default' keeps the current behaviour (last used session
+# pinned to the end). 'attached' orders every session by when it was last
+# attached, so your most recently used sessions stay together near the prompt.
+set -g @sessionx-sort 'attached'
+
 # If you want to pass in your own FZF options. This is passed in before all other
 # arguments to FZF to ensure that other options like `sessionx-pointer` and
 # `sessionx-window-height/width` still work. See `man fzf` for config options.
