@@ -136,6 +136,10 @@ set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
 # under the aforementioned custom paths, e.g. /Users/me/projects/tmux-sessionx
 set -g @sessionx-custom-paths-subdirectories 'false'
 
+## An integer value, if `@sessionx-custom-paths-subdirectories` is set to true,
+## this value will determine how deep the search for subdirectories will go.
+set -g @sessionx-custom-paths-max-depth '1'
+
 # Uses `fzf --tmux` instead of the `fzf-tmux` script (requires fzf >= 0.53).
 set -g @sessionx-fzf-builtin-tmux 'on'
 

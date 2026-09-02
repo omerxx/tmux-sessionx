@@ -48,12 +48,14 @@ additional_input() {
 	sessions=$(get_sorted_sessions)
 	custom_paths=$(tmux show-option -gqv @sessionx-_custom-paths)
 	custom_path_subdirectories=$(tmux show-option -gqv @sessionx-_custom-paths-subdirectories)
+	custom_path_max_depth=$(tmux show-option -gqv @sessionx-_custom-paths-max-depth)
+
 	if [[ -z "$custom_paths" ]]; then
 		echo ""
 	else
 		clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
 		if [[ "$custom_path_subdirectories" == "true" ]]; then
-			paths=$(find ${clean_paths//,/ } -mindepth 1 -maxdepth 1 -type d)
+			paths=$(find ${clean_paths//,/ } -mindepth 1 -maxdepth "$custom_path_max_depth" -type d)
 		else
 			paths=${clean_paths//,/ }
 		fi
