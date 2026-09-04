@@ -77,7 +77,7 @@ handle_output() {
 		target=$(echo "$@" | tr -d '\n')
 	elif is_fzf-marks_mark "$@" ; then
 		# Needs to run before session name mode
-		mark=$(get_fzf-marks_mark "$@")
+		mark=$(get_fzf-marks_mark "$@" | tr '.' '_')
 		target=$(get_fzf-marks_target "$@")
 	elif echo "$@" | grep ':' >/dev/null 2>&1; then
 		# Colon probably delimits session name and window number
