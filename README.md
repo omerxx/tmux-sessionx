@@ -127,10 +127,10 @@ set -g @sessionx-prefix off
 # e.g. set -g @sessionx-x-path '~/dotfiles'
 set -g @sessionx-x-path '<some-path>'
 
-# A comma delimited absolute-paths list of custom paths
-# always visible in results and ready to create a session from.
+# A comma delimited list of custom paths to always be visible in results
+# and ready to create a session from. Supports glob expansions.
 # Tip: if you're using zoxide mode, there's a good chance this is redundant
-set -g @sessionx-custom-paths '/Users/me/projects,/Users/me/second-brain'
+set -g @sessionx-custom-paths "$HOME/projects,$HOME/nested-projects/*/modules/*"
 
 # A boolean flag, if set to true, will also display subdirectories
 # under the aforementioned custom paths, e.g. /Users/me/projects/tmux-sessionx
