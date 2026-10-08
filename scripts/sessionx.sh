@@ -55,7 +55,7 @@ additional_input() {
 		if [[ "$custom_path_subdirectories" == "true" ]]; then
 			paths=$(find ${clean_paths//,/ } -mindepth 1 -maxdepth 1 -type d)
 		else
-			paths=${clean_paths//,/ }
+			paths=$(find ${clean_paths//,/ } -mindepth 0 -maxdepth 0 -type d)
 		fi
 		add_path() {
 			local path=$1
