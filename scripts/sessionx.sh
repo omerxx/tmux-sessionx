@@ -53,7 +53,8 @@ additional_input() {
 	else
 		clean_paths=$(echo "$custom_paths" | sed -E 's/ *, */,/g' | sed -E 's/^ *//' | sed -E 's/ *$//' | sed -E 's/ /✗/g')
 		if [[ "$custom_path_subdirectories" == "true" ]]; then
-			paths=$(find ${clean_paths//,/ } -mindepth 1 -maxdepth 1 -type d)
+			custom_depth=$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories-depth" "1")
+			paths=$(find ${clean_paths//,/ } -mindepth "$custom_depth" -maxdepth "$custom_depth" -type d)
 		else
 			paths=${clean_paths//,/ }
 		fi
