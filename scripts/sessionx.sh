@@ -93,26 +93,36 @@ handle_output() {
 		exit 0
 	fi
 
-	if ! tmux has-session -t="$target" 2>/dev/null; then
-		if is_tmuxinator_enabled && is_tmuxinator_template "$target"; then
-			tmuxinator start "$target"
-		elif test -n "$mark"; then
-			tmux new-session -ds "$mark" -c "$target"
-			target="$mark"
-		elif test -d "$target"; then
-			d_target="$(basename "$target" | tr -d '.')"
-			tmux new-session -ds $d_target -c "$target"
-			target=$d_target
+	if tmux has-session -t="$target" 2>/dev/null; then
+		tmux switch-client -t "$target"
+		exit 0
+	fi
+	
+	name="$target"
+	if is_tmuxinator_enabled && is_tmuxinator_template "$name"; then
+		tmuxinator start "$name"
+	elif test -n "$mark"; then
+		name="$mark"
+	elif test -d "$target"; then
+		name="$(basename "$target" | tr -d '.')"
+	else
+		if [[ "$Z_MODE" == "on" ]]; then
+			target=$(zoxide query "$target")
 		else
-			if [[ "$Z_MODE" == "on" ]]; then
-				z_target=$(zoxide query "$target")
-				tmux new-session -ds "$target" -c "$z_target" -n "$z_target"
-			else
-				tmux new-session -ds "$target"
-			fi
+			target=""
 		fi
 	fi
-	tmux switch-client -t "$target"
+
+	if is_tmuxinator_enabled && [ -f "$target/.tmuxinator.yml" ]; then
+		env -C "$target" tmuxinator local
+	else
+		if test -n "$target"; then
+			tmux new-session -ds "$name" -c "$target"
+		else 
+			tmux new-session -ds "$name"
+		fi
+		tmux switch-client -t "$name"
+	fi
 
 	exit 0
 }
