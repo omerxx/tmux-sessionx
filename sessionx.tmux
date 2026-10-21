@@ -161,6 +161,7 @@ handle_extra_options() {
 	tmux set-option -g @sessionx-_filter-current "$(tmux_option_or_fallback "@sessionx-filter-current" "true")"
 	tmux set-option -g @sessionx-_custom-paths "$(tmux_option_or_fallback "@sessionx-custom-paths" "")"
 	tmux set-option -g @sessionx-_custom-paths-subdirectories "$(tmux_option_or_fallback "@sessionx-custom-paths-subdirectories" "false")"
+	tmux set-option -g @sessionx-_custom-paths-max-depth "$(tmux_option_or_fallback "@sessionx-custom-paths-max-depth" "1")"
 	tmux set-option -g @sessionx-_git-branch "$(tmux_option_or_fallback "@sessionx-git-branch" "off")"
 	tmux set-option -g @sessionx-_fzf-builtin-tmux "$FZF_BUILTIN_TMUX"
 }
